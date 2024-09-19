@@ -1,0 +1,33 @@
+name: app
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./compose/test/Dockerfile
+    image: app
+    container_name: app
+    restart: always
+    depends_on:
+      - app-postgres-db
+    ports:
+      - 8000:8000
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+    tty: true
+    stdin_open: true
+
+  app-postgres-db:
+    image: postgres:16
+    container_name: app-postgres-db
+    volumes:
+      - app-postgres-db-data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+
+volumes:
+  app-postgres-db-data:
