@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "app"
+version = "0.1.0"
+description = ""
+authors = ["Gabriel Morales <gabrielmorales1@protonmail.com>"]
+readme = "README.md"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+alembic = "^1.13.2"
+asyncpg = "^0.29.0"
+fastapi = "^0.115.0"
+httpx = "^0.27.2"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+pydantic = "^2.9.2"
+pydantic-settings = "^2.5.2"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.28"}
+uvicorn = {extras = ["standard"], version = "^0.28.0"}
+python-multipart = "^0.0.9"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.6.5"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.3.3"
+pytest-asyncio = "^0.24.0"
+
+[tool.pytest.ini_options]
+addopts = "-vv --last-failed --exitfirst --disable-warnings"
+migrations= false
+minversion = "7.4.4"
+python_files = ["test_*.py"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
