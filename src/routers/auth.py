@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from src.core.database import get_db
 from src.core.schemas.auth import AuthGrantedData, CreatedUserData, CreateUser
-from src.services.users import create_user, user_login
+from src.services.users import create_user, get_current_user, user_login
 
 router = APIRouter(
     prefix="/auth",
@@ -38,3 +38,15 @@ async def login(
     access_token = await user_login(db=db, auth_data=auth_data)
 
     return AuthGrantedData(access_token=access_token, refresh_token=None)
+
+
+@router.post(
+    path="/me",
+    status_code=status.HTTP_200_OK,
+)
+async def get_user_data(
+    access_token: str,
+):
+    user = get_current_user(access_token=access_token)
+
+    return user

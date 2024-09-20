@@ -6,7 +6,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
-from src.core.auth_handler import encode_token, get_password_hash, verify_password
+from src.core.auth_handler import decode_access_token, encode_token, get_password_hash, oauth2_scheme, verify_password
+from src.core.database import get_db
 from src.core.models.user import User
 from src.core.schemas.auth import AuthGrantedData, CreateUser
 
@@ -58,3 +59,22 @@ async def user_login(
         access_token=access_token,
         refresh_token="",
     )
+
+
+async def get_current_user(
+    access_token: Annotated[str, Depends(oauth2_scheme)],
+    db: Session = Depends(get_db),
+) -> User:
+    jwt_payload = decode_access_token(access_token=access_token)
+
+    user_id = jwt_payload.sub
+
+    query = select(User).where(User.id == int(user_id))
+    result = await db.execute(query)
+    user = result.scalars().first()
+
+    if not user:
+        detail = "Invalid token"
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=detail)
+
+    return user

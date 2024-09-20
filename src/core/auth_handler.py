@@ -1,16 +1,11 @@
 from datetime import datetime, timedelta
-from typing import Annotated
 
 import pydantic
-from fastapi import Depends, HTTPException, status
+from fastapi import HTTPException
 from fastapi.security import HTTPBearer, OAuth2PasswordBearer
 from jose import jwt
 from passlib.context import CryptContext
-from sqlalchemy.future import select
-from sqlalchemy.orm import Session
 
-from src.core.database import get_db
-from src.core.models.user import User
 from src.core.schemas.auth import EncodedTokenData
 from src.core.settings import settings
 
@@ -64,24 +59,3 @@ def decode_access_token(access_token: str) -> EncodedTokenData:
         raise HTTPException(status_code=401, detail=detail)
 
     return payload
-
-
-async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
-    db: Session = Depends(get_db),
-):
-    user_id = decode_access_token(token=token)
-
-    if user_id is None:
-        detail = "Invalid token"
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=detail)
-
-    query = select(User).where(User.id == user_id)
-    result = await db.execute(query)
-    user = result.scalars().first()
-
-    if not user:
-        detail = "Invalid token"
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=detail)
-
-    return user
