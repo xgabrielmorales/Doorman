@@ -4,11 +4,14 @@ import pytest
 from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from freezegun import freeze_time
+from jose import jwt
 from pydantic import BaseModel
 from sqlalchemy.future import select
 
+from src.core.auth_handler import ALGORITHM
 from src.core.models.user import User
 from src.core.schemas.auth import CreateUser
+from src.core.settings import settings
 from src.services.users import create_user, get_current_user, user_login
 
 
@@ -44,7 +47,7 @@ class TestCreateUser:
 
         assert exc_info.value.status_code == status.HTTP_400_BAD_REQUEST
         assert "User with the same username or document number already exists" in str(
-            exc_info.value
+            exc_info.value,
         )
 
     @pytest.mark.asyncio
@@ -103,15 +106,17 @@ class TestUserLogin:
         assert user.id == authenticated_user.id
         assert user.username == authenticated_user.username
 
+
+class TestJWT:
     @pytest.mark.asyncio
-    async def test_user_invalid_token(self, async_db_session, user_data):
+    async def test_invalid_token(self, async_db_session, user_data):
         invalid_access_token = "eyJhbGciOiJIpXVCJ9.eyJzdWjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwV_adQssw5c"
 
         with pytest.raises(HTTPException, match="401: Invalid token"):
             await get_current_user(access_token=invalid_access_token, db=async_db_session)
 
     @pytest.mark.asyncio
-    async def test_user_modified_token(self, async_db_session, user_data):
+    async def test_expired_token(self, async_db_session, user_data):
         await create_user(db=async_db_session, user_data=user_data)
 
         auth_data = OAuth2PasswordRequestForm(
@@ -123,6 +128,18 @@ class TestUserLogin:
         PLUS_30_MINUTES = datetime.now() + timedelta(minutes=30, seconds=1)
 
         with freeze_time(PLUS_30_MINUTES), pytest.raises(
-            HTTPException, match="401: Signature has expired"
+            HTTPException,
+            match="401: Signature has expired",
         ):
             await get_current_user(access_token=jwt_payload.access_token, db=async_db_session)
+
+    @pytest.mark.asyncio
+    async def test_modified_token(self, async_db_session, user_data):
+        modified_access_token = jwt.encode(
+            claims={"random": "key"},
+            key=settings.SECRET_KEY,
+            algorithm=ALGORITHM,
+        )
+
+        with pytest.raises(HTTPException, match="401: Invalid token payload"):
+            await get_current_user(access_token=modified_access_token, db=async_db_session)

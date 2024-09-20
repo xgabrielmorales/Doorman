@@ -34,10 +34,13 @@ freezegun = "^1.5.1"
 
 [tool.pytest.ini_options]
 addopts = "--last-failed --exitfirst --disable-warnings"
-migrations= false
 minversion = "7.4.4"
 python_files = ["test_*.py"]
 testpaths = ["tests"]
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.coverage.run]
+omit = ["tests/*"]
 
 [tool.ruff]
 line-length = 100
