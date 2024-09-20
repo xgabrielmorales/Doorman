@@ -1,19 +1,20 @@
-import asyncio
+import os
 
-import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
-from sqlalchemy import event
+from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool
 
+from src.core.database import get_db
 from src.core.settings import settings
+from src.main import app
 
 async_engine = create_async_engine(
     settings.POSTGRES_URL,
-    pool_size=5,
     echo=True,
-    max_overflow=10,
+    poolclass=NullPool,
 )
 
 TestingAsyncSessionLocal = sessionmaker(
@@ -30,34 +31,29 @@ async def async_db_session():
     connection = await async_engine.connect()
     trans = await connection.begin()
     async_session = TestingAsyncSessionLocal(bind=connection)
-    nested = await connection.begin_nested()
 
-    @event.listens_for(async_session.sync_session, "after_transaction_end")
-    def end_savepoint(session, transaction):
-        nonlocal nested
-
-        if not nested.is_active:
-            nested = connection.sync_connection.begin_nested()
-
-    yield async_session
-
-    await trans.rollback()
-    await async_session.close()
-    await connection.close()
+    try:
+        yield async_session
+    finally:
+        await trans.rollback()
+        await async_session.close()
+        await connection.close()
 
 
-@pytest_asyncio.fixture(scope="session")
-def event_loop():
-    policy = asyncio.get_event_loop_policy()
-    loop = policy.new_event_loop()
-
-    yield loop
-
-    loop.close()
+@pytest_asyncio.fixture(scope="function")
+async def client(async_db_session) -> TestClient:
+    app.dependency_overrides[get_db] = lambda: async_db_session
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        yield client
 
 
-@pytest.fixture(scope="session")
-def client() -> TestClient:
-    from src.main import app
+@pytest_asyncio.fixture(scope="function")
+def set_postgres_db():
+    original_value = os.environ.get("POSTGRES_URL")
 
-    return TestClient(app)
+    yield
+
+    if original_value is not None:
+        os.environ["POSTGRES_URL"] = original_value
+    else:
+        del os.environ["POSTGRES_URL"]

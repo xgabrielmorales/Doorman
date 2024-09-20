@@ -8,7 +8,7 @@ from jose import jwt
 from pydantic import BaseModel
 from sqlalchemy.future import select
 
-from src.core.auth_handler import ALGORITHM
+from src.core.auth_handler import ALGORITHM, encode_token
 from src.core.models.user import User
 from src.core.schemas.auth import CreateUser
 from src.core.settings import settings
@@ -143,3 +143,10 @@ class TestJWT:
 
         with pytest.raises(HTTPException, match="401: Invalid token payload"):
             await get_current_user(access_token=modified_access_token, db=async_db_session)
+
+    @pytest.mark.asyncio
+    async def test_access_token_non_existing_user(self, async_db_session, user_data):
+        access_token = encode_token(user_id=0)
+
+        with pytest.raises(HTTPException, match="401: Token not associated with any user"):
+            await get_current_user(access_token=access_token, db=async_db_session)

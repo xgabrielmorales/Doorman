@@ -1,21 +1,8 @@
 import os
 
 import pytest
-import pytest_asyncio
 
 from src.core.settings import Settings
-
-
-@pytest_asyncio.fixture(scope="function")
-def set_postgres_db():
-    original_value = os.environ.get("POSTGRES_URL")
-
-    yield
-
-    if original_value is not None:
-        os.environ["POSTGRES_URL"] = original_value
-    else:
-        del os.environ["POSTGRES_URL"]
 
 
 def test_postgres_url_assembly(set_postgres_db):
