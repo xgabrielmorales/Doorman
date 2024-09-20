@@ -22,7 +22,6 @@ python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 sqlalchemy = {extras = ["asyncio"], version = "^2.0.28"}
 uvicorn = {extras = ["standard"], version = "^0.28.0"}
 python-multipart = "^0.0.9"
-coverage = "^7.6.1"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.6.5"
@@ -30,6 +29,8 @@ ruff = "^0.6.5"
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.3"
 pytest-asyncio = "^0.24.0"
+coverage = "^7.6.1"
+freezegun = "^1.5.1"
 
 [tool.pytest.ini_options]
 addopts = "--last-failed --exitfirst --disable-warnings"
