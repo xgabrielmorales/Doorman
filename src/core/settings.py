@@ -8,7 +8,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
 
-    SECRET_KEY: str
+    # SECURITY WARNING: keep the secret key used in production secret!
+    SECRET_KEY: str = "3RWM3zT68QEaOacQiYmSVzNyOHnJMpqVQi8mS2zN"
 
     POSTGRES_HOST: str
     POSTGRES_PASSWORD: str
