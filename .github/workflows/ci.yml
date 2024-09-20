@@ -5,6 +5,28 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+        POSTGRES_HOST: localhost
+        POSTGRES_DB: example-db-db
+        POSTGRES_USER: example-user-db
+        POSTGRES_PASSWORD: example-password-db
+
+    services:
+      postgres-db:
+        image: postgres:16
+        env:
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
@@ -21,16 +43,14 @@ jobs:
           poetry config virtualenvs.create false
           poetry install --no-directory --no-root --with test
 
-      - name: Lint with Ruff
+      - name: Lint and Format with Ruff
         run: |
           ruff check --output-format=github .
-        continue-on-error: true
-
-      - name: Formater with Ruff
-        run: |
           ruff format --check .
         continue-on-error: true
 
-      - name: Test with pytest
-        run: |
-          pytest
+      - name: Run database migrations
+        run: alembic upgrade head
+
+      - name: Run tests
+        run: pytest

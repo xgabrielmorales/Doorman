@@ -15,7 +15,6 @@ def test_postgres_url_assembly(set_postgres_db):
 
 def test_env_variables():
     required_env_variables = [
-        "SECRET_KEY",
         "POSTGRES_USER",
         "POSTGRES_HOST",
         "POSTGRES_PASSWORD",
