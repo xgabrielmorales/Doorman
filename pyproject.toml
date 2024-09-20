@@ -40,7 +40,7 @@ python_files = ["test_*.py"]
 testpaths = ["tests"]
 
 [tool.ruff]
-line-length = 120
+line-length = 100
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
