@@ -19,7 +19,7 @@ def user_data():
 async def test_user_register(client, user_data):
     response = await client.post(
         url="/auth/register",
-        json=user_data.dict(),
+        json=user_data.model_dump(),
     )
     assert response.status_code == codes.CREATED.value
 

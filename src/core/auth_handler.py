@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 import pydantic
 from fastapi import HTTPException
@@ -25,14 +25,16 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 def encode_token(user_id: int) -> str:
+    utc_now = datetime.now(UTC)
+
     payload: EncodedTokenData = EncodedTokenData(
-        exp=(datetime.utcnow() + timedelta(minutes=30)),
-        iat=datetime.utcnow(),
+        exp=(utc_now + timedelta(minutes=30)),
+        iat=utc_now,
         sub=str(user_id),
     )
 
     return jwt.encode(
-        claims=payload.dict(),
+        claims=payload.model_dump(),
         key=settings.SECRET_KEY,
         algorithm=ALGORITHM,
     )
