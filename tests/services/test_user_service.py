@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 
+import jwt
 import pytest
 from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from freezegun import freeze_time
-from jose import jwt
 from pydantic import BaseModel
 from sqlalchemy.future import select
 
@@ -136,7 +136,7 @@ class TestJWT:
     @pytest.mark.asyncio
     async def test_modified_token(self, async_db_session, user_data):
         modified_access_token = jwt.encode(
-            claims={"random": "key"},
+            payload={"random": "key"},
             key=settings.SECRET_KEY,
             algorithm=ALGORITHM,
         )

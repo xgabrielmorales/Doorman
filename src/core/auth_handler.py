@@ -1,9 +1,9 @@
 from datetime import UTC, datetime, timedelta
 
+import jwt
 import pydantic
 from fastapi import HTTPException
 from fastapi.security import HTTPBearer, OAuth2PasswordBearer
-from jose import jwt
 from passlib.context import CryptContext
 
 from src.core.schemas.auth import EncodedTokenData
@@ -34,7 +34,7 @@ def encode_token(user_id: int) -> str:
     )
 
     return jwt.encode(
-        claims=payload.model_dump(),
+        payload=payload.model_dump(),
         key=settings.SECRET_KEY,
         algorithm=ALGORITHM,
     )
@@ -43,14 +43,14 @@ def encode_token(user_id: int) -> str:
 def decode_access_token(access_token: str) -> EncodedTokenData:
     try:
         raw_payload: dict = jwt.decode(
-            token=access_token,
+            jwt=access_token,
             key=settings.SECRET_KEY,
             algorithms=[ALGORITHM],
         )
     except jwt.ExpiredSignatureError:
         detail = "Signature has expired"
         raise HTTPException(status_code=401, detail=detail)
-    except jwt.JWTError:
+    except jwt.PyJWTError:
         detail = "Invalid token"
         raise HTTPException(status_code=401, detail=detail)
 
