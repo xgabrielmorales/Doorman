@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from src.core.database import get_db
-from src.core.schemas.auth import AuthGrantedData, CreatedUserData, CreateUser
+from src.core.schemas.auth import AuthGrantedData, CreatedUserData, CreateUser, UserMeRequestData
 from src.services.users import create_user, get_current_user, user_login
 
 router = APIRouter(
@@ -22,9 +22,7 @@ async def register(
     user_data: CreateUser,
     db: Session = Depends(get_db),
 ) -> CreatedUserData:
-    user = await create_user(db=db, user_data=user_data)
-
-    return user
+    return await create_user(db=db, user_data=user_data)
 
 
 @router.post(
@@ -35,9 +33,7 @@ async def login(
     auth_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Session = Depends(get_db),
 ) -> AuthGrantedData:
-    access_token = await user_login(db=db, auth_data=auth_data)
-
-    return AuthGrantedData(access_token=access_token, refresh_token=None)
+    return await user_login(db=db, auth_data=auth_data)
 
 
 @router.post(
@@ -45,8 +41,7 @@ async def login(
     status_code=status.HTTP_200_OK,
 )
 async def get_user_data(
-    access_token: str,
+    data: UserMeRequestData,
+    db: Session = Depends(get_db),
 ):
-    user = get_current_user(access_token=access_token)
-
-    return user
+    return await get_current_user(access_token=data.access_token, db=db)

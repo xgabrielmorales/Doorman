@@ -12,13 +12,9 @@ router = APIRouter(tags=["Health Checks"])
     "/healthcheck",
     status_code=status.HTTP_200_OK,
 )
-async def healthcheck(postgres_db: Session = Depends(get_db)) -> dict:
+async def healthcheck(db: Session = Depends(get_db)) -> dict:
     try:
-        await postgres_db.execute(text("SELECT 1"))
-        postgres_status = "ok"
+        await db.execute(text("SELECT 1"))
+        return {"PostgreSQL": "healthy"}
     except OperationalError:
-        postgres_status = "error"
-
-    return {
-        "PostgreSQL": postgres_status,
-    }
+        return {"PostgreSQL": "unhealthy"}

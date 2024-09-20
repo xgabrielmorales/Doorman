@@ -28,3 +28,7 @@ class AuthData(BaseModel):
 class AuthGrantedData(BaseModel):
     access_token: str
     refresh_token: str
+
+
+class UserMeRequestData(BaseModel):
+    access_token: str
