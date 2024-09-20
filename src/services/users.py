@@ -8,12 +8,12 @@ from sqlalchemy.orm import Session
 
 from src.core.auth_handler import encode_token, get_password_hash, verify_password
 from src.core.models.user import User
-from src.core.schemas.auth import CreatedUserData
+from src.core.schemas.auth import AuthGrantedData, CreateUser
 
 
 async def create_user(
     db: Session,
-    user_data: CreatedUserData,
+    user_data: CreateUser,
 ) -> User:
     query = select(User).where(User.username == user_data.username)
     result = await db.execute(query)
@@ -41,7 +41,7 @@ async def create_user(
 async def user_login(
     db: Session,
     auth_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-):
+) -> AuthGrantedData:
     query = select(User).where(User.username == auth_data.username)
     result = await db.execute(query)
     user = result.scalars().first()
@@ -52,6 +52,9 @@ async def user_login(
             detail="Invalid username or password",
         )
 
-    token = encode_token(user.id)
+    access_token = encode_token(user_id=user.id)
 
-    return token
+    return AuthGrantedData(
+        access_token=access_token,
+        refresh_token="",
+    )

@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from src.core.database import get_db
-from src.core.schemas.auth import CreatedUserData, CreateUser
+from src.core.schemas.auth import AuthGrantedData, CreatedUserData, CreateUser
 from src.services.users import create_user, user_login
 
 router = APIRouter(
@@ -34,10 +34,7 @@ async def register(
 async def login(
     auth_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Session = Depends(get_db),
-):
-    token = await user_login(db=db, auth_data=auth_data)
+) -> AuthGrantedData:
+    access_token = await user_login(db=db, auth_data=auth_data)
 
-    return {
-        "token_type": "Bearer",
-        "access_token": token,
-    }
+    return AuthGrantedData(access_token=access_token, refresh_token=None)
