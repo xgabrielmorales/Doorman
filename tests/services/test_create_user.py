@@ -5,7 +5,8 @@ from sqlalchemy.future import select
 
 from src.core.models.user import User
 from src.core.schemas.auth import CreateUser
-from src.services.users import create_user, user_login
+from src.services.users import create_user, user_login, get_current_user
+from pydantic import BaseModel
 
 
 @pytest.fixture
@@ -58,9 +59,10 @@ class TestUserLogin:
             password=user_data.password,
         )
 
-        token = await user_login(async_db_session, auth_data)
+        jwt_payload = await user_login(async_db_session, auth_data)
 
-        assert isinstance(token, str)
+        assert isinstance(jwt_payload, BaseModel)
+        assert isinstance(jwt_payload.access_token, str)
 
     @pytest.mark.asyncio
     async def test_user_login_invalid_credentials(self, async_db_session, user_data):
@@ -76,3 +78,22 @@ class TestUserLogin:
 
         assert exc_info.value.status_code == 401
         assert exc_info.value.detail == "Invalid username or password"
+
+    @pytest.mark.asyncio
+    async def test_user_get_session(self, async_db_session, user_data):
+        user = await create_user(db=async_db_session, user_data=user_data)
+
+        auth_data = OAuth2PasswordRequestForm(
+            username=user_data.username,
+            password=user_data.password,
+        )
+
+        jwt_payload = await user_login(async_db_session, auth_data)
+
+        authenticated_user = await get_current_user(
+            access_token=jwt_payload.access_token,
+            db=async_db_session,
+        )
+
+        assert user.id == authenticated_user.id
+        assert user.username == authenticated_user.username
