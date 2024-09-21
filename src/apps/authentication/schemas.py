@@ -20,11 +20,13 @@ class AuthGrantedData(BaseModel):
 
 
 class CreateUserData(BaseModel):
-    name: str
+    first_name: str
+    last_name: str
     username: str
     password: str
 
 
 class CreatedUserData(BaseModel):
-    name: str
+    first_name: str
+    last_name: str
     username: str

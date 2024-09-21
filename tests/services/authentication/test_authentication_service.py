@@ -18,7 +18,8 @@ from src.core.settings import settings
 @pytest.fixture
 def user_data():
     return CreateUserData(
-        name="Test User",
+        first_name="Test",
+        last_name="User",
         username="testuser",
         password="password123",
     )
@@ -34,7 +35,8 @@ class TestUserRegistration:
         created_user = result.scalars().first()
 
         assert user.username == user_data.username
-        assert user.name == user_data.name
+        assert user.first_name == user_data.first_name
+        assert user.last_name == user_data.last_name
 
         assert created_user is not None
 
@@ -46,7 +48,7 @@ class TestUserRegistration:
             await create_user(db=async_db_session, user_data=user_data)
 
         assert exc_info.value.status_code == status.HTTP_400_BAD_REQUEST
-        assert "User with the same username or document number already exists" in str(
+        assert "User with the same username already exists" in str(
             exc_info.value,
         )
 

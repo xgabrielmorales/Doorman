@@ -77,11 +77,12 @@ async def create_user(
     result = result.scalars().first()
 
     if result:
-        detail = "User with the same username or document number already exists"
+        detail = "User with the same username already exists"
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=detail)
 
     db_user = User(
-        name=user_data.name,
+        first_name=user_data.first_name,
+        last_name=user_data.last_name,
         username=user_data.username,
         password=get_password_hash(user_data.password),
     )

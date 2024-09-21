@@ -8,7 +8,8 @@ from src.apps.authentication.services import create_user, encode_token
 @pytest.fixture
 def user_data():
     return CreateUserData(
-        name="Elliot Alderson 4",
+        first_name="Elliot",
+        last_name="Alderson",
         username="Mr_r0b0t",
         password="p4ain_",
     )
@@ -32,7 +33,8 @@ async def test_user_me(async_client, async_db_session, user_data):
 
     user_me_repsonse_payload = user_me_repsonse.json()
 
-    assert user.name == user_me_repsonse_payload["name"]
+    assert user.first_name == user_me_repsonse_payload["first_name"]
+    assert user.last_name == user_me_repsonse_payload["last_name"]
     assert user.username == user_me_repsonse_payload["username"]
 
 

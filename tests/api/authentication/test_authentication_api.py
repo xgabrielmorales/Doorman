@@ -8,7 +8,8 @@ from src.apps.authentication.services import create_user
 @pytest.fixture
 def user_data():
     return CreateUserData(
-        name="Elliot Alderson 4",
+        first_name="Elliot",
+        last_name=" Alderson 4",
         username="Mr_r0b0t",
         password="p4ain_",
     )
@@ -23,7 +24,8 @@ async def test_user_register(async_client, user_data):
     assert response.status_code == codes.CREATED.value
 
     response_payload = response.json()
-    assert response_payload["name"] == user_data.name
+    assert response_payload["first_name"] == user_data.first_name
+    assert response_payload["last_name"] == user_data.last_name
     assert response_payload["username"] == user_data.username
 
 
