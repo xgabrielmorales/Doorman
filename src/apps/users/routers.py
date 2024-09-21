@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status
-from sqlalchemy.orm import Session
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.apps.users.schemas import UserMeData, UserMeRequestData
 from src.apps.users.services import get_current_user
@@ -14,6 +14,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
 )
 async def get_user_data(
     data: UserMeRequestData,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> UserMeData:
-    return await get_current_user(db=db, access_token=data.access_token)
+    user = await get_current_user(db=db, access_token=data.access_token)
+    return UserMeData.model_validate(user)

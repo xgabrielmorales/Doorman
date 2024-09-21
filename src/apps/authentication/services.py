@@ -74,9 +74,9 @@ async def create_user(
     query = select(User).where(User.username == user_data.username)
     result = await db.execute(query)
 
-    result = result.scalars().first()
+    user: User | None = result.scalars().first()
 
-    if result:
+    if user:
         detail = "User with the same username already exists"
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=detail)
 

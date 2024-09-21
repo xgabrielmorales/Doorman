@@ -29,10 +29,11 @@ ruff = "^0.6.5"
 pre-commit = "^3.8.0"
 
 [tool.poetry.group.test.dependencies]
-pytest = "^8.3.3"
-pytest-asyncio = "^0.24.0"
 coverage = "^7.6.1"
 freezegun = "^1.5.1"
+mypy = "^1.11.2"
+pytest = "^8.3.3"
+pytest-asyncio = "^0.24.0"
 
 [tool.pytest.ini_options]
 addopts = "--last-failed --exitfirst --disable-warnings"
@@ -46,7 +47,21 @@ omit = ["tests/*"]
 
 [tool.ruff]
 line-length = 100
-exclude = ["migrations"]
+exclude = [
+  ".env",
+  "venv",
+  "migrations",
+]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
+
+[tool.mypy]
+python_version = "3.12"
+check_untyped_defs = true
+ignore_missing_imports = true
+exclude = [
+  ".env",
+  "venv",
+  "migrations",
+]

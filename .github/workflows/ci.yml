@@ -55,6 +55,10 @@ jobs:
           ruff format --check .
         continue-on-error: true
 
+      - name: Static type checker with Mypy
+        run: mypy .
+        continue-on-error: true
+
       - name: Run database migrations
         run: alembic upgrade head
 

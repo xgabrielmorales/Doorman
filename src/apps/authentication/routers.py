@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.apps.authentication.schemas import (
     AuthGrantedData,
@@ -21,9 +21,11 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 )
 async def register(
     user_data: CreateUserData,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> CreatedUserData:
-    return await create_user(db=db, user_data=user_data)
+    user = await create_user(db=db, user_data=user_data)
+
+    return CreatedUserData.model_validate(user)
 
 
 @router.post(
@@ -32,6 +34,8 @@ async def register(
 )
 async def login(
     auth_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> AuthGrantedData:
-    return await user_login(db=db, auth_data=auth_data)
+    user = await user_login(db=db, auth_data=auth_data)
+
+    return AuthGrantedData.model_validate(user)

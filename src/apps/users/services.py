@@ -19,7 +19,7 @@ async def get_current_user(
 
     query = select(User).where(User.id == int(user_id))
     result = await db.execute(query)
-    user = result.scalars().first()
+    user: User | None = result.scalars().first()
 
     if not user:
         raise HTTPException(

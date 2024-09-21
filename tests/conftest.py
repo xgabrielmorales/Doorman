@@ -1,10 +1,9 @@
 import os
+from typing import AsyncGenerator
 
 import pytest_asyncio
-from fastapi.testclient import TestClient
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
 from src.core.database import get_db
@@ -12,12 +11,12 @@ from src.core.settings import settings
 from src.main import app
 
 async_engine = create_async_engine(
-    settings.POSTGRES_URL,
+    settings.POSTGRES_URL,  # type: ignore[arg-type]
     echo=True,
     poolclass=NullPool,
 )
 
-TestingAsyncSessionLocal = sessionmaker(
+TestingAsyncSessionLocal = async_sessionmaker(
     async_engine,
     expire_on_commit=False,
     autoflush=False,
@@ -41,7 +40,7 @@ async def async_db_session():
 
 
 @pytest_asyncio.fixture(scope="function")
-async def async_client(async_db_session) -> TestClient:
+async def async_client(async_db_session) -> AsyncGenerator:
     app.dependency_overrides[get_db] = lambda: async_db_session
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         yield client
