@@ -9,17 +9,6 @@ class EncodedTokenData(BaseModel):
     sub: str
 
 
-class CreateUser(BaseModel):
-    name: str
-    username: str
-    password: str
-
-
-class CreatedUserData(BaseModel):
-    name: str
-    username: str
-
-
 class AuthData(BaseModel):
     username: str
     password: str
@@ -30,5 +19,12 @@ class AuthGrantedData(BaseModel):
     refresh_token: str
 
 
-class UserMeRequestData(BaseModel):
-    access_token: str
+class CreateUserData(BaseModel):
+    name: str
+    username: str
+    password: str
+
+
+class CreatedUserData(BaseModel):
+    name: str
+    username: str
