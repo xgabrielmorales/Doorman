@@ -41,7 +41,7 @@ async def async_db_session():
 
 
 @pytest_asyncio.fixture(scope="function")
-async def client(async_db_session) -> TestClient:
+async def async_client(async_db_session) -> TestClient:
     app.dependency_overrides[get_db] = lambda: async_db_session
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         yield client

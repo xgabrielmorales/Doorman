@@ -8,23 +8,23 @@ from freezegun import freeze_time
 from pydantic import BaseModel
 from sqlalchemy.future import select
 
-from src.core.auth_handler import ALGORITHM, encode_token
-from src.core.models.user import User
-from src.core.schemas.auth import CreateUser
+from src.apps.authentication.schemas import CreateUserData
+from src.apps.authentication.services import ALGORITHM, encode_token, user_login, create_user
+from src.apps.users.models import User
+from src.apps.users.services import get_current_user
 from src.core.settings import settings
-from src.services.users import create_user, get_current_user, user_login
 
 
 @pytest.fixture
 def user_data():
-    return CreateUser(
+    return CreateUserData(
         name="Test User",
         username="testuser",
         password="password123",
     )
 
 
-class TestCreateUser:
+class TestUserRegistration:
     @pytest.mark.asyncio
     async def test_create_user_new_username(self, async_db_session, user_data):
         user = await create_user(db=async_db_session, user_data=user_data)
@@ -107,7 +107,7 @@ class TestUserLogin:
         assert user.username == authenticated_user.username
 
 
-class TestJWT:
+class TestJWTAuthentication:
     @pytest.mark.asyncio
     async def test_invalid_token(self, async_db_session, user_data):
         invalid_access_token = "eyJhbGciOiJIpXVCJ9.eyJzdWjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwV_adQssw5c"
