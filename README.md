@@ -1,6 +1,13 @@
-# Inicializa el proyecto
+# None
+![Python version](https://img.shields.io/badge/Python-3.12-blue?style=flat-square)
+![Continuous integration](https://img.shields.io/github/actions/workflow/status/xgabrielmorales/None/ci.yml?style=flat-square)
 
-1. Dentro de la carpeta del proyecto, crea un archivo .env y adicional las variables de entorno:
+## Inicializa el proyecto
+
+1. Dentro de la carpeta del proyecto, crea un archivo `.env` y adicional las variables de entorno:
+    <details>
+    <summary>Haz clic aquí para usar las de ejemplo</summary>
+
     ```bash
     # Base
     # ==============================================================================
@@ -8,30 +15,23 @@
 
     # Postgres DB
     # ==============================================================================
-    POSTGRES_DB=example-db
-    POSTGRES_PASSWORD=e8617cc1dccfbeefe3777f6816bd6cce
-    POSTGRES_HOST=example-postgres-db
-    POSTGRES_USER=example-db
+    POSTGRES_HOST=postgres-db
+    POSTGRES_DB=example-db-db
+    POSTGRES_USER=example-user-db
+    POSTGRES_PASSWORD=example-password-db
     ```
 
-2. Haz build de la imagen de docker con el siguiente comando:
+    </details>
+
+2. Haz el build de la imagen de Docker.:
    ```bash
    $ docker compose -f docker-compose.dev.yml build
    ```
-
-3. Levanta el servicio de la base de datos y aplica las migraciones:
-   ```bash
-   $ docker compose -f docker-compose.dev.yml up -d app-postgres-db
-   ```
-   ```bash
-   $ docker compose -f docker-compose.dev.yml run --rm app alembic upgrade head
-   ```
-
-4. Levanta todos los servicios restantes:
+3. Levanta la aplicación. Internamente, levantará todos los servicios necesarios y automáticamente aplicará las migraciones requeridas a la base de datos.
    ```bash
    $ docker compose -f docker-compose.dev.yml up -d
    ```
-5. Como adicional para ejecutar los tests utiliza el comando:
+4. Puedes ejecutar los tests con el siguiente comando:
    ```bash
    $ docker compose -f docker-compose.test.yml run --rm app pytest
    ```
