@@ -1,13 +1,10 @@
-from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column
-
-from src.core.database import Base
+from sqlmodel import Field, SQLModel
 
 
-class User(Base):
+class User(SQLModel, table=True):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(length=32))
-    username: Mapped[str] = mapped_column(String(length=128), unique=True)
-    password: Mapped[str]
+    id: int = Field(default=None, primary_key=True)
+    name: str = Field(max_length=32)
+    username: str = Field(max_length=128, unique=True)
+    password: str = Field(max_length=128)

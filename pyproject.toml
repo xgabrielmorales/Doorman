@@ -20,7 +20,8 @@ pydantic = "^2.9.2"
 pydantic-settings = "^2.5.2"
 pyjwt = "^2.9.0"
 python-multipart = "^0.0.9"
-sqlalchemy = {extras = ["asyncio"], version = "^2.0.28"}
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.35"}
+sqlmodel = "^0.0.22"
 uvicorn = {extras = ["standard"], version = "^0.28.0"}
 
 [tool.poetry.group.dev.dependencies]
@@ -44,6 +45,7 @@ omit = ["tests/*"]
 
 [tool.ruff]
 line-length = 100
+exclude = ["migrations"]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true

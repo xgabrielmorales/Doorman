@@ -6,8 +6,8 @@ import pydantic
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
-from sqlalchemy.future import select
-from sqlalchemy.orm import Session
+from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.apps.authentication.schemas import AuthGrantedData, CreateUserData, EncodedTokenData
 from src.apps.users.models import User
@@ -68,7 +68,7 @@ def decode_access_token(access_token: str) -> EncodedTokenData:
 
 
 async def create_user(
-    db: Session,
+    db: AsyncSession,
     user_data: CreateUserData,
 ) -> User:
     query = select(User).where(User.username == user_data.username)
@@ -95,7 +95,7 @@ async def create_user(
 
 
 async def user_login(
-    db: Session,
+    db: AsyncSession,
     auth_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> AuthGrantedData:
     query = select(User).where(User.username == auth_data.username)

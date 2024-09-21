@@ -2,17 +2,17 @@ from typing import Annotated
 
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
-from sqlalchemy.future import select
-from sqlalchemy.orm import Session
+from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
-from src.apps.users.models import User
 from src.apps.authentication.services import decode_access_token, oauth2_scheme
+from src.apps.users.models import User
 from src.core.database import get_db
 
 
 async def get_current_user(
     access_token: Annotated[str, Depends(oauth2_scheme)],
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> User:
     jwt_payload = decode_access_token(access_token=access_token)
 

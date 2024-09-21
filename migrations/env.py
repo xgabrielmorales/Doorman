@@ -25,12 +25,10 @@ config.set_section_option(section, "POSTGRES_DB", settings.POSTGRES_DB)
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-from src.core.database import Base  # noqa: E402
+from sqlmodel import SQLModel  # noqa: E402
 from src.apps.users.models import User  # noqa
 
-target_metadata = Base.metadata
+target_metadata = SQLModel.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
