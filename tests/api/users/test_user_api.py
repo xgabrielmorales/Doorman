@@ -1,5 +1,6 @@
 import pytest
-from httpx import codes
+from httpx import AsyncClient, codes
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.apps.authentication.schemas import CreateUserData
 from src.apps.authentication.services import create_user, encode_token
@@ -16,7 +17,11 @@ def user_data():
 
 
 @pytest.mark.asyncio
-async def test_user_me(async_client, async_db_session, user_data):
+async def test_user_me(
+    async_client: AsyncClient,
+    async_db_session: AsyncSession,
+    user_data: CreateUserData,
+):
     user = await create_user(db=async_db_session, user_data=user_data)
 
     auth_token_reponse = await async_client.post(
@@ -39,7 +44,11 @@ async def test_user_me(async_client, async_db_session, user_data):
 
 
 @pytest.mark.asyncio
-async def test_invalid_user_me(async_client, async_db_session, user_data):
+async def test_invalid_user_me(
+    async_client: AsyncClient,
+    async_db_session: AsyncSession,
+    user_data: CreateUserData,
+):
     access_token = encode_token(user_id=0)
 
     user_me_repsonse = await async_client.post(

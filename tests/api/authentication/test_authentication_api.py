@@ -1,5 +1,6 @@
 import pytest
-from httpx import codes
+from httpx import AsyncClient, codes
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.apps.authentication.schemas import CreateUserData
 from src.apps.authentication.services import create_user
@@ -16,7 +17,10 @@ def user_data():
 
 
 @pytest.mark.asyncio
-async def test_user_register(async_client, user_data):
+async def test_user_register(
+    async_client: AsyncClient,
+    user_data: CreateUserData,
+):
     response = await async_client.post(
         url="/auth/register",
         json=user_data.model_dump(),
@@ -30,7 +34,11 @@ async def test_user_register(async_client, user_data):
 
 
 @pytest.mark.asyncio
-async def test_user_login(async_client, async_db_session, user_data):
+async def test_user_login(
+    async_client: AsyncClient,
+    async_db_session: AsyncSession,
+    user_data: CreateUserData,
+):
     await create_user(db=async_db_session, user_data=user_data)
 
     response = await async_client.post(
