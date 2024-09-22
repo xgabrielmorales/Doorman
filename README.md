@@ -1,6 +1,7 @@
 # None
 ![Python version](https://img.shields.io/badge/Python-3.12-blue?style=flat-square)
 ![Continuous integration](https://img.shields.io/github/actions/workflow/status/xgabrielmorales/None/ci.yml?style=flat-square)
+![Coverage Status](https://img.shields.io/coverallsCoverage/github/xgabrielmorales/None?branch=main&style=flat-square)
 
 ## Inicializa el proyecto
 

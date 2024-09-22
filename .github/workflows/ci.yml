@@ -63,4 +63,9 @@ jobs:
         run: alembic upgrade head
 
       - name: Run tests
-        run: pytest
+        run: pytest --cov=src --cov-report=term-missing --cov-report=html
+
+      - name: Coveralls
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: coveralls

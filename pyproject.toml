@@ -10,7 +10,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = ">=3.12,<3.13"
 alembic = "^1.13.2"
 asyncpg = "^0.29.0"
 fastapi = "^0.115.0"
@@ -29,21 +29,19 @@ ruff = "^0.6.5"
 pre-commit = "^3.8.0"
 
 [tool.poetry.group.test.dependencies]
-coverage = "^7.6.1"
+coveralls = "^4.0.1"
 freezegun = "^1.5.1"
 mypy = "^1.11.2"
 pytest = "^8.3.3"
 pytest-asyncio = "^0.24.0"
+pytest-cov = "^5.0.0"
 
 [tool.pytest.ini_options]
-addopts = "--last-failed --exitfirst --disable-warnings"
+addopts = "--last-failed --exitfirst --disable-warnings -v"
 minversion = "7.4.4"
 python_files = ["test_*.py"]
 testpaths = ["tests"]
 asyncio_default_fixture_loop_scope = "function"
-
-[tool.coverage.run]
-omit = ["tests/*"]
 
 [tool.ruff]
 line-length = 100
