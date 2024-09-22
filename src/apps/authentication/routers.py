@@ -9,7 +9,8 @@ from src.apps.authentication.schemas import (
     CreatedUserData,
     CreateUserData,
 )
-from src.apps.authentication.services import create_user, user_login
+from src.apps.authentication.services.jwt import AuthJwt
+from src.apps.authentication.services.users import create_user, user_login
 from src.core.database import get_db
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -34,8 +35,21 @@ async def register(
 )
 async def login(
     auth_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    authorize: Annotated[AuthJwt, Depends()],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> AuthGrantedData:
-    user = await user_login(db=db, auth_data=auth_data)
+    return await user_login(db=db, authorize=authorize, auth_data=auth_data)
 
-    return AuthGrantedData.model_validate(user)
+
+@router.post("/refresh")
+def refresh(
+    authorize: AuthJwt = Depends(),
+) -> AuthGrantedData:
+    authorize.jwt_refresh_token_required()
+
+    token = authorize.get_jwt()
+
+    access_token = authorize.create_access_token(subject=token.sub)
+    refresh_token = authorize.create_refresh_token(subject=token.sub)
+
+    return AuthGrantedData(access_token=access_token, refresh_token=refresh_token)

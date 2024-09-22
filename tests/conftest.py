@@ -1,11 +1,13 @@
 import os
 from typing import AsyncGenerator
 
+import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import NullPool
 
+from src.apps.authentication.services.jwt import AuthJwt
 from src.core.database import get_db
 from src.core.settings import settings
 from src.main import app
@@ -56,3 +58,8 @@ def set_postgres_db():
         os.environ["POSTGRES_URL"] = original_value
     else:
         del os.environ["POSTGRES_URL"]
+
+
+@pytest.fixture
+def authorize():
+    return AuthJwt()

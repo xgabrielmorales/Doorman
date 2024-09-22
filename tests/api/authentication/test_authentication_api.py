@@ -3,7 +3,7 @@ from httpx import AsyncClient, codes
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.apps.authentication.schemas import CreateUserData
-from src.apps.authentication.services import create_user
+from src.apps.authentication.services.users import create_user
 
 
 @pytest.fixture

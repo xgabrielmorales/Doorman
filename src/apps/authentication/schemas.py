@@ -1,12 +1,12 @@
-from datetime import datetime
-
 from pydantic import BaseModel
 
 
-class EncodedTokenData(BaseModel):
-    exp: datetime
-    iat: datetime
-    sub: str
+class Token(BaseModel):
+    exp: int
+    iat: int
+    jti: str
+    sub: str | int
+    type: str
 
 
 class AuthData(BaseModel):
@@ -33,4 +33,4 @@ class CreatedUserData(BaseModel):
 
     class Config:
         from_attributes = True
-        orm_mode = True
+        from_attributes = True

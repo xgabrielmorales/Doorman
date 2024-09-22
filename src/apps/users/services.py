@@ -5,7 +5,7 @@ from fastapi.exceptions import HTTPException
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from src.apps.authentication.services import decode_access_token, oauth2_scheme
+from src.apps.authentication.services.jwt import AuthJwt, oauth2_scheme
 from src.apps.users.models import User
 from src.core.database import get_db
 
@@ -13,12 +13,11 @@ from src.core.database import get_db
 async def get_current_user(
     db: Annotated[AsyncSession, Depends(get_db)],
     access_token: Annotated[str, Depends(oauth2_scheme)],
+    authorize: Annotated[AuthJwt, Depends()],
 ) -> User:
-    jwt_payload = decode_access_token(access_token=access_token)
+    jwt = authorize.get_jwt(encoded_token=access_token)
 
-    user_id = jwt_payload.sub
-
-    query = select(User).where(User.id == int(user_id))
+    query = select(User).where(User.id == int(jwt.sub))
     result = await db.execute(query)
     user: User | None = result.scalars().first()
 

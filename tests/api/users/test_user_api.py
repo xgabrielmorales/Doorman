@@ -3,7 +3,8 @@ from httpx import AsyncClient, codes
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.apps.authentication.schemas import CreateUserData
-from src.apps.authentication.services import create_user, encode_token
+from src.apps.authentication.services.jwt import AuthJwt
+from src.apps.authentication.services.users import create_user
 
 
 @pytest.fixture
@@ -48,8 +49,9 @@ async def test_invalid_user_me(
     async_client: AsyncClient,
     async_db_session: AsyncSession,
     user_data: CreateUserData,
+    authorize: AuthJwt,
 ):
-    access_token = encode_token(user_id=0)
+    access_token = authorize.create_access_token(subject=0)
 
     user_me_repsonse = await async_client.post(
         url="/users/me",
