@@ -25,6 +25,4 @@ RUN --mount=type=cache,target=/root/.cache/pypoetry \
   --mount=type=bind,source=./poetry.lock,target=./poetry.lock \
   poetry install --no-directory --no-root --with test
 
-COPY --chmod=0755 ./compose/dev/start /start
-
 USER ${APP_NAME}
