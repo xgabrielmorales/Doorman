@@ -16,7 +16,7 @@ from src.core.settings import settings
 ALGORITHM = "HS256"
 
 security = HTTPBearer()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 

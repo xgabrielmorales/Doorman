@@ -27,7 +27,7 @@ async def test_user_me(async_client, async_db_session, user_data):
 
     user_me_repsonse = await async_client.post(
         url="/users/me",
-        json={"access_token": auth_token_reponse_payload["access_token"]},
+        headers={"Authorization": f"Bearer {auth_token_reponse_payload["access_token"]}"},
     )
     assert user_me_repsonse.status_code == codes.OK.value
 
@@ -44,7 +44,7 @@ async def test_invalid_user_me(async_client, async_db_session, user_data):
 
     user_me_repsonse = await async_client.post(
         url="/users/me",
-        json={"access_token": access_token},
+        headers={"Authorization": f"Bearer {access_token}"},
     )
     assert user_me_repsonse.status_code == codes.UNAUTHORIZED.value
 

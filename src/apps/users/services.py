@@ -7,10 +7,11 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.apps.authentication.services import decode_access_token, oauth2_scheme
 from src.apps.users.models import User
+from src.core.database import get_db
 
 
 async def get_current_user(
-    db: AsyncSession,
+    db: Annotated[AsyncSession, Depends(get_db)],
     access_token: Annotated[str, Depends(oauth2_scheme)],
 ) -> User:
     jwt_payload = decode_access_token(access_token=access_token)

@@ -21,7 +21,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 )
 async def register(
     user_data: CreateUserData,
-    db: AsyncSession = Depends(get_db),
+    db: Annotated[AsyncSession, Depends(get_db)],
 ) -> CreatedUserData:
     user = await create_user(db=db, user_data=user_data)
 
@@ -34,7 +34,7 @@ async def register(
 )
 async def login(
     auth_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    db: AsyncSession = Depends(get_db),
+    db: Annotated[AsyncSession, Depends(get_db)],
 ) -> AuthGrantedData:
     user = await user_login(db=db, auth_data=auth_data)
 
