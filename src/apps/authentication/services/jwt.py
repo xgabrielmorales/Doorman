@@ -8,6 +8,12 @@ from fastapi import Request
 from fastapi.security import OAuth2PasswordBearer
 
 from src.apps.authentication.schemas import Token
+from src.apps.authentication.services.jwt_exceptions import (
+    AuthJwtAccessTokenRequired,
+    AuthJwtDecodeError,
+    AuthJwtRefreshTokenRequired,
+    InvalidHeaderError,
+)
 from src.core.settings import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -37,8 +43,8 @@ class AuthJwt:
 
         # <HeaderName>: <HeaderType> <JWT>
         if not re.match(r"{}\s".format(header_type), auth) or len(parts) != 2:
-            msg = f"Bad {header_name} header. Expected value '{header_type} <JWT>'"
-            raise Exception(msg)
+            detail = f"Bad {header_name} header. Expected value '{header_type} <JWT>'"
+            raise InvalidHeaderError(status_code=422, detail=detail)
 
         self._token = parts[1]
 
@@ -117,8 +123,8 @@ class AuthJwt:
                 key=settings.SECRET_KEY,
                 algorithms=algorithms,
             )
-        except Exception:
-            raise
+        except Exception as err:
+            raise AuthJwtDecodeError(status_code=422, detail=str(err))
 
         return Token(**raw_jwt)
 
@@ -131,11 +137,11 @@ class AuthJwt:
             raise ValueError("token_type must be a string and must be either 'access' or 'refresh'")
 
         if self.get_jwt(token).type != token_type:
-            msg = "Only {} tokens are allowed".format(token_type)
+            detail = "Only {} tokens are allowed".format(token_type)
             if token_type == "access":
-                raise Exception(msg)
+                raise AuthJwtAccessTokenRequired(status_code=422, detail=detail)
             if token_type == "refresh":
-                raise Exception(msg)
+                raise AuthJwtRefreshTokenRequired(status_code=422, detail=detail)
 
     def jwt_refresh_token_required(self):
         self._verify_jwt_in_request(self._token, "refresh")

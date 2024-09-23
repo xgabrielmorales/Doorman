@@ -68,7 +68,7 @@ class TestUserRegistration:
         assert user.password != user_data.password
 
 
-class TestUserLogin:
+class TestAuthentication:
     @pytest.mark.asyncio
     async def test_user_login_valid_credentials(
         self,
@@ -144,7 +144,3 @@ class TestUserLogin:
 
         assert user.id == authenticated_user.id
         assert user.username == authenticated_user.username
-
-
-class TestJWTAuthentication:
-    pass

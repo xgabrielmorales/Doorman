@@ -15,9 +15,9 @@ async def get_current_user(
     access_token: Annotated[str, Depends(oauth2_scheme)],
     authorize: Annotated[AuthJwt, Depends()],
 ) -> User:
-    jwt = authorize.get_jwt(encoded_token=access_token)
+    token = authorize.get_jwt(encoded_token=access_token)
 
-    query = select(User).where(User.id == int(jwt.sub))
+    query = select(User).where(User.id == int(token.sub))
     result = await db.execute(query)
     user: User | None = result.scalars().first()
 
