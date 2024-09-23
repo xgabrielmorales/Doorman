@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class Token(BaseModel):
-    exp: int
+    exp: int | None = None
     iat: int
     jti: str
     sub: str | int

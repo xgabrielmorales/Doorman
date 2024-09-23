@@ -44,6 +44,26 @@ class TestAutorizationAPI:
         assert response_payload["username"] == user_data.username
 
     @pytest.mark.asyncio
+    async def test_register_existing_user(
+        self,
+        async_client: AsyncClient,
+        user_data: CreateUserData,
+    ):
+        await async_client.post(
+            url="/auth/register",
+            json=user_data.model_dump(),
+        )
+
+        response = await async_client.post(
+            url="/auth/register",
+            json=user_data.model_dump(),
+        )
+        assert response.status_code == codes.BAD_REQUEST.value
+
+        response_payload = response.json()
+        assert response_payload["detail"] == "User with the same username already exists"
+
+    @pytest.mark.asyncio
     @pytest.mark.parametrize(
         argnames="valid_username, valid_password",
         argvalues=[(True, True), (True, False), (False, True), (False, False)],

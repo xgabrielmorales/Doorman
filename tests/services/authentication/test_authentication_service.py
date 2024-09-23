@@ -117,7 +117,7 @@ class TestAuthentication:
         assert exc_info.value.detail == "Invalid username or password"
 
     @pytest.mark.asyncio
-    async def test_user_get_session_data(
+    async def test_get_session_data(
         self,
         async_db_session: AsyncSession,
         user_data: CreateUserData,
@@ -144,3 +144,19 @@ class TestAuthentication:
 
         assert user.id == authenticated_user.id
         assert user.username == authenticated_user.username
+
+    @pytest.mark.asyncio
+    async def test_invalid_session_data(
+        self,
+        async_db_session: AsyncSession,
+        user_data: CreateUserData,
+        authorize: AuthJwt,
+    ):
+        access_token = authorize.create_access_token(subject=0)
+
+        with pytest.raises(HTTPException):
+            await get_current_user(
+                access_token=access_token,
+                db=async_db_session,
+                authorize=authorize,
+            )

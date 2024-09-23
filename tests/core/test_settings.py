@@ -5,6 +5,7 @@ import pytest
 from src.core.settings import Settings
 
 
+@pytest.mark.asyncio
 def test_postgres_url_assembly(set_postgres_db):
     expected_url = "postgresql+asyncpg://myuser:mypassword@localhost/mydatabase"
     os.environ["POSTGRES_URL"] = expected_url
@@ -13,6 +14,7 @@ def test_postgres_url_assembly(set_postgres_db):
     assert settings.POSTGRES_URL == expected_url
 
 
+@pytest.mark.asyncio
 def test_env_variables():
     required_env_variables = [
         "POSTGRES_USER",

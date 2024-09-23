@@ -25,6 +25,7 @@ class AuthJwt:
     _algorithm = "HS256"
     _header_type = "Bearer"
     _header_name = "Authorization"
+    _token: str | bytes | None = None
 
     def __init__(
         self,
@@ -41,7 +42,8 @@ class AuthJwt:
 
         parts = auth.split()
 
-        # <HeaderName>: <HeaderType> <JWT>
+        # <HeaderType> <JWT>
+        # Example: Bearer eyJhbGciOiIsIn9.eyJG4gRG9lINDIyfQ.Sfl36POk6yJV_adQssw5c
         if not re.match(r"{}\s".format(header_type), auth) or len(parts) != 2:
             detail = f"Bad {header_name} header. Expected value '{header_type} <JWT>'"
             raise InvalidHeaderError(status_code=422, detail=detail)
@@ -63,11 +65,14 @@ class AuthJwt:
         token_type: Literal["access", "refresh"],
         exp_time: int | None = None,
     ) -> str:
-        if not isinstance(subject, (str, int)):
-            raise TypeError("subject must be a string or integer")
+        if type(subject) not in (str, int):
+            raise TypeError("subject must be a String or Integer")
 
         if token_type not in ["access", "refresh"]:
-            raise ValueError("token_type must be a string and must be either 'access' or 'refresh'")
+            raise ValueError("token_type must be a String and must be either 'access' or 'refresh'")
+
+        if exp_time is not None and type(exp_time) is not int:
+            raise TypeError("exp_time must be an Integer or None")
 
         reserved_claims: dict[str, str | int] = {
             "iat": self._get_int_from_datetime(datetime.now(timezone.utc)),
@@ -119,7 +124,7 @@ class AuthJwt:
 
         try:
             raw_jwt = jwt.decode(
-                jwt=token,
+                jwt=token,  # type: ignore[arg-type]
                 key=settings.SECRET_KEY,
                 algorithms=algorithms,
             )
@@ -144,7 +149,7 @@ class AuthJwt:
                 raise AuthJwtRefreshTokenRequired(status_code=422, detail=detail)
 
     def jwt_refresh_token_required(self):
-        self._verify_jwt_in_request(self._token, "refresh")
+        self._verify_jwt_in_request(self._token, "refresh")  # type: ignore[arg-type]
 
     def jwt_access_token_required(self):
-        self._verify_jwt_in_request(self._token, "access")
+        self._verify_jwt_in_request(self._token, "access")  # type: ignore[arg-type]
