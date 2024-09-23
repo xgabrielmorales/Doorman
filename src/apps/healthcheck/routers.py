@@ -15,9 +15,12 @@ router = APIRouter(tags=["Health Check"])
 )
 async def healthcheck(db: AsyncSession = Depends(get_db)) -> HealthCheckData:
     try:
-        await db.execute(text("SELECT 1"))
-        response = HealthCheckData(PostgreSQL="healthy")
+        (await db.exec(text("SELECT 1"))).scalars().first()
+        postgres_status = "healthy"
     except OperationalError:
-        response = HealthCheckData(PostgreSQL="unhealthy")
+        postgres_status = "unhealthy"
 
-    return response
+    return HealthCheckData(
+        app="healthy",
+        postgresql=postgres_status,
+    )

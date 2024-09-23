@@ -4,4 +4,5 @@ from pydantic import BaseModel
 
 
 class HealthCheckData(BaseModel):
-    PostgreSQL: Literal["healthy", "unhealthy"]
+    app: Literal["healthy", "unhealthy"]
+    postgresql: Literal["healthy", "unhealthy"]
