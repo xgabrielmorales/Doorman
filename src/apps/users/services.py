@@ -18,8 +18,8 @@ async def get_current_user(
     token = authorize.get_jwt(encoded_token=access_token)
 
     query = select(User).where(User.id == int(token.sub))
-    result = await db.execute(query)
-    user: User | None = result.scalars().first()
+    result = await db.exec(query)
+    user: User | None = result.first()
 
     if not user:
         raise HTTPException(

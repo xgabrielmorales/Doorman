@@ -14,9 +14,9 @@ async def create_user(
     user_data: CreateUserData,
 ) -> User:
     query = select(User).where(User.username == user_data.username)
-    result = await db.execute(query)
+    result = await db.exec(query)
 
-    user: User | None = result.scalars().first()
+    user: User | None = result.first()
 
     if user:
         detail = "User with the same username already exists"
@@ -42,8 +42,8 @@ async def user_login(
     authorize: AuthJwt,
 ) -> AuthGrantedData:
     query = select(User).where(User.username == auth_data.username)
-    result = await db.execute(query)
-    user = result.scalars().first()
+    result = await db.exec(query)
+    user = result.first()
 
     if user is None or not verify_password(auth_data.password, user.password):
         raise HTTPException(

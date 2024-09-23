@@ -2,7 +2,7 @@ import pytest
 from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
-from sqlalchemy.future import select
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.apps.authentication.schemas import CreateUserData
@@ -32,8 +32,8 @@ class TestUserRegistration:
         user = await create_user(db=async_db_session, user_data=user_data)
 
         query = select(User).where(User.username == user_data.username)
-        result = await async_db_session.execute(query)
-        created_user = result.scalars().first()
+        result = await async_db_session.exec(query)
+        created_user = result.first()
 
         assert user.username == user_data.username
         assert user.first_name == user_data.first_name
