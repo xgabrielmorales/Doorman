@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class Token(BaseModel):
@@ -27,10 +27,8 @@ class CreateUserData(BaseModel):
 
 
 class CreatedUserData(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     first_name: str
     last_name: str
     username: str
-
-    class Config:
-        from_attributes = True
-        from_attributes = True

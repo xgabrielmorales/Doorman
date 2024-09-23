@@ -16,7 +16,6 @@ from unittest.mock import MagicMock
 
 
 class TestAuthJWTService:
-    @pytest.mark.asyncio
     def test_constructor(self):
         request = MagicMock()
         request.headers = {
@@ -27,32 +26,26 @@ class TestAuthJWTService:
 
         assert autorize._token == request.headers["authorization"].split()[1]
 
-    @pytest.mark.asyncio
     def test_jwt_identifier(self, authorize: AuthJwt):
         assert isinstance(authorize._get_jwt_identifier(), str)
 
-    @pytest.mark.asyncio
     def test_jwt_from_headers(self, authorize: AuthJwt):
         authorization_header = "Bearer eyJhbGciOiIsIn9.eyJG4gRG9lINDIyfQ.Sfl36POk6yJV_adQssw5c"
         authorize._get_jwt_from_headers(auth=authorization_header)
         assert authorize._token == authorization_header.split()[1]
 
-    @pytest.mark.asyncio
     def test_invalid_jwt_from_headers(self, authorize: AuthJwt):
         with pytest.raises(InvalidHeaderError):
             authorize._get_jwt_from_headers(auth="random string")
 
-    @pytest.mark.asyncio
     def test_int_from_datetime(self, authorize: AuthJwt):
         now = datetime.now()
         assert authorize._get_int_from_datetime(now) == int(now.timestamp())
 
-    @pytest.mark.asyncio
     def test__invalid_int_from_datetime(self, authorize: AuthJwt):
         with pytest.raises(TypeError):
             authorize._get_int_from_datetime(None)  # type: ignore[arg-type]
 
-    @pytest.mark.asyncio
     def test_create_valid_type_tokens(self, authorize: AuthJwt):
         access_token = authorize.create_access_token(subject=1)
         refresh_token = authorize.create_refresh_token(subject=1)
@@ -63,7 +56,6 @@ class TestAuthJWTService:
         assert decoded_access_token["type"] == "access"
         assert decoded_refresh_token["type"] == "refresh"
 
-    @pytest.mark.asyncio
     def test_create_invalid_type_tokens(self, authorize: AuthJwt):
         with pytest.raises(TypeError):
             authorize.create_access_token(subject=None)  # type: ignore[arg-type]
@@ -71,7 +63,6 @@ class TestAuthJWTService:
         with pytest.raises(TypeError):
             authorize.create_refresh_token(subject=None)  # type: ignore[arg-type]
 
-    @pytest.mark.asyncio
     def test_create_valid_tokens(self, authorize: AuthJwt):
         exp_time = int((datetime.now() + timedelta(minutes=1)).timestamp())
 
@@ -80,7 +71,6 @@ class TestAuthJWTService:
         assert isinstance(authorize._create_token(1, "access", exp_time), str)
         assert isinstance(authorize._create_token(1, "refresh", exp_time), str)
 
-    @pytest.mark.asyncio
     def test_create_invalid_tokens(self, authorize: AuthJwt):
         with pytest.raises(TypeError):
             authorize._create_token(subject=29.4, token_type="access")  # type: ignore[arg-type]
