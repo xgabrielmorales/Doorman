@@ -17,7 +17,9 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
 ]
 
-LOCAL_APPS = []
+LOCAL_APPS = [
+    "none.item.apps.ItemConfig",
+]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -36,7 +38,7 @@ ROOT_URLCONF = "config.urls"
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
-    "DEFAULT_PAGINATION_CLASS": "src.apps.api.pagination.LimitOffsetPagination",
+    "DEFAULT_PAGINATION_CLASS": "none.api.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 20,
 }
 
