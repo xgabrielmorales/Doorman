@@ -1,12 +1,12 @@
-name: app
+name: doorman
 
 services:
   app:
     build:
       context: .
       dockerfile: ./compose/dev/Dockerfile
-    image: app
-    container_name: app
+    image: doorman-app
+    container_name: doorman-app
     restart: always
     depends_on:
       - postgres-db
@@ -20,13 +20,13 @@ services:
 
   postgres-db:
     image: postgres:16
-    container_name: postgres-db
+    container_name: doorman-postgres-db
     volumes:
-      - postgres-db-data:/var/lib/postgresql/data
+      - doorman-postgres-db-data:/var/lib/postgresql/data
     env_file:
       - .env
     ports:
       - "5432:5432"
 
 volumes:
-  postgres-db-data:
+  doorman-postgres-db-data:

@@ -32,7 +32,7 @@
    ```bash
    $ docker compose -f docker-compose.dev.yml up -d
    ```
-4. Puedes ejecutar los tests con el siguiente comando:
+4. Para ejecutar los tests usa el siguiente comando:
    ```bash
-   $ docker compose -f docker-compose.test.yml run --rm app pytest
+   $ docker compose -f docker-compose.dev.yml run --rm app pytest
    ```
