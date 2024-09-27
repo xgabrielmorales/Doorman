@@ -1,10 +1,12 @@
+name: shop
+
 services:
-  django:
+  app:
     build:
       context: .
       dockerfile: ./compose/dev/Dockerfile
-    image: app-none-01
-    container_name: app-none-01
+    image: shop-app
+    container_name: shop-app
     restart: always
     ports:
       - 8000:8000
@@ -20,13 +22,13 @@ services:
 
   postgres-db:
     image: postgres:16
-    container_name: postgres-db-none-01
+    container_name: shop-postgres-db
     volumes:
-      - none-01-postgres-db-data:/var/lib/postgresql/data
+      - shop-postgres-db-data:/var/lib/postgresql/data
     env_file:
       - .env
     ports:
       - "5432:5432"
 
 volumes:
-  none-01-postgres-db-data:
+  shop-postgres-db-data:

@@ -1,11 +1,11 @@
 FROM --platform=linux/x86_64 python:3.12-slim
 
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONPATH "${PYTHONPATH}:/app"
+ENV \
+  PYTHONUNBUFFERED=1 \
+  PYTHONDONTWRITEBYTECODE=1 \
+  UV_PROJECT_ENVIRONMENT=/venv
 
-ARG APP_NAME="app"
-
+ARG APP_NAME="shop"
 RUN groupadd --system "${APP_NAME}" \
   && adduser \
   --no-create-home \
@@ -14,23 +14,17 @@ RUN groupadd --system "${APP_NAME}" \
   --ingroup "${APP_NAME}" \
   "${APP_NAME}"
 
-RUN apt-get update && \
-  apt-get install -y --no-install-recommends \
-  # Global dependencies
-  && apt install -y gcc \
-  # Clean up APT cache
-  && rm -rf /var/lib/apt/ \lists/*
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-RUN python -m pip install --upgrade pip \
-  && python -m pip install poetry \
-  && poetry config virtualenvs.create false
+RUN \
+  --mount=type=cache,target=/root/.cache/uv \
+  --mount=type=bind,source=./pyproject.toml,target=./pyproject.toml \
+  --mount=type=bind,source=./uv.lock,target=./uv.lock \
+  uv sync --locked --dev --no-install-project
 
 WORKDIR /app
 
-RUN --mount=type=cache,target=/root/.cache/pypoetry \
-  --mount=type=bind,source=./pyproject.toml,target=./pyproject.toml \
-  --mount=type=bind,source=./poetry.lock,target=./poetry.lock \
-  poetry install --no-directory --no-root
+ENV PATH "/venv/bin:$PATH"
 
 COPY --chmod=0755 ./compose/dev/start /start
 
