@@ -2,17 +2,14 @@
 __pycache__/
 *.py[cod]
 *$py.class
-.pdb-pyhist
+
+# Sqlite
+db.sqlite3
+db.sqlite3-journal
 
 # Environments
-.env*
-.venv
-env/
-venv/
+.env
 
-# IDE - Vim
+# Vim
 *.swp
 *.swo
-
-# Coverage
-.coverage
