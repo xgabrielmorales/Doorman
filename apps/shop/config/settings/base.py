@@ -18,6 +18,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "shop.item.apps.ItemConfig",
+    "shop.order.apps.OrderConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
