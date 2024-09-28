@@ -1,6 +1,6 @@
 from django.db import models
 
-from none.item.models import Item
+from shop.item.models import Item
 from tests.models.common import BaseModelFieldTest
 from django.core.validators import MinValueValidator
 

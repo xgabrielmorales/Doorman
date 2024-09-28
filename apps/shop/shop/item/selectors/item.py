@@ -1,7 +1,7 @@
 import django_filters
 from django.db.models import QuerySet
 
-from none.item.models import Item
+from shop.item.models import Item
 
 
 class ItemListFilter(django_filters.FilterSet):

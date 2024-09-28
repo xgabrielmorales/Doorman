@@ -3,7 +3,7 @@ from rest_framework import serializers, status
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import Request, Response
 
-from none.item.services.item import item_create
+from shop.item.services.item import item_create
 
 
 class ItemCreateAPIView(GenericAPIView):

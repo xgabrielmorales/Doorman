@@ -3,9 +3,9 @@ from rest_framework import serializers, status
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import Request, Response
 
-from none.api.pagination import LimitOffsetPagination, get_paginated_response
-from none.item.models import Item
-from none.item.selectors.item import ItemListFilter, items_list
+from shop.api.pagination import LimitOffsetPagination, get_paginated_response
+from shop.item.models import Item
+from shop.item.selectors.item import ItemListFilter, items_list
 
 
 class ItemListAPIView(GenericAPIView):

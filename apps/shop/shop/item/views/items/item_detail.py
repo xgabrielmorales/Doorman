@@ -3,7 +3,7 @@ from rest_framework import serializers, status
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import Request, Response
 
-from none.item.selectors.item import item_detail
+from shop.item.selectors.item import item_detail
 
 
 class ItemDetailAPIView(GenericAPIView):

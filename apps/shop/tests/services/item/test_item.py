@@ -2,8 +2,8 @@ from decimal import Decimal
 
 import pytest
 
-from none.item.models import Item
-from none.item.services.item import item_create, item_delete, item_partial_update
+from shop.item.models import Item
+from shop.item.services.item import item_create, item_delete, item_partial_update
 from tests.factories.item import ItemFactory
 
 

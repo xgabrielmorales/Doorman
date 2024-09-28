@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from none.item.views.items import (
+from shop.item.views.items import (
     ItemCreateAPIView,
     ItemDeleteAPIView,
     ItemDetailAPIView,

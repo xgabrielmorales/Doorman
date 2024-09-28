@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from none.item.models import Item
+from shop.item.models import Item
 from tests.factories.item import ItemFactory
 
 pytestmark = pytest.mark.django_db

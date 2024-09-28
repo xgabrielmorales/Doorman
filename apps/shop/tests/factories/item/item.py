@@ -1,6 +1,6 @@
 from factory import Faker, django
 
-from none.item.models import Item
+from shop.item.models import Item
 
 
 class ItemFactory(django.DjangoModelFactory):

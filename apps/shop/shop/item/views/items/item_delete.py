@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.views import APIView, Request, Response
 from drf_spectacular.utils import extend_schema
 
-from none.item.services.item import item_delete
+from shop.item.services.item import item_delete
 
 
 @extend_schema(responses=None, request=None)

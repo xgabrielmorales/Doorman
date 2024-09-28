@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from none.common.models import BaseModel
+from shop.common.models import BaseModel
 
 
 class Item(BaseModel):

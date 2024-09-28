@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.db import transaction
 
-from none.item.models import Item
+from shop.item.models import Item
 
 
 @transaction.atomic
