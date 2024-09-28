@@ -6,7 +6,7 @@ from config.env import env
 DEBUG = True
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY", str)
+SECRET_KEY = env("SECRET_KEY", str, default="3RWM3zT68QEaOacQiYmSVzNyOHnJMpqVQi8mS2zN")
 
 
 ALLOWED_HOSTS = ["*"]

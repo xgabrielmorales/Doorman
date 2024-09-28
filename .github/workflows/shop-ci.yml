@@ -1,0 +1,77 @@
+name: Shop CI
+
+on:
+  push:
+    paths:
+      - .github/workflows/doorman-ci.yml
+      - apps/shop/shop/**
+      - apps/shop/test/**
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/shop
+
+    env:
+        POSTGRES_HOST: localhost
+        POSTGRES_PORT: 5432
+        POSTGRES_DB: example-db-db
+        POSTGRES_USER: example-user-db
+        POSTGRES_PASSWORD: example-password-db
+        DJANGO_SETTINGS_MODULE: config.settings.dev
+
+    services:
+      postgres-db:
+        image: postgres:16
+        env:
+          POSTGRES_PORT: ${{ env.POSTGRES_PORT }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install dependencies
+        run: |
+          uv sync --locked --no-install-project --dev
+
+      - name: Lint and Format with Ruff
+        run: |
+          uv run ruff check --output-format=github .
+          uv run ruff format --check .
+        continue-on-error: true
+
+      - name: Run database migrations
+        run: uv run python manage.py migrate
+
+      - name: Run tests
+        run: uv run pytest --cov=src --cov-report=term-missing --cov-report=html
+
+      - name: Coveralls
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: uv run coveralls
