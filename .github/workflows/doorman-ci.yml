@@ -70,9 +70,10 @@ jobs:
         run: uv run alembic upgrade head
 
       - name: Run tests
-        run: uv run pytest --cov=src --cov-report=term-missing --cov-report=html
+        run: uv run pytest --cov=src --cov-report=term-missing --cov-report=xml
 
       - name: Coveralls
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: uv run coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-path: apps/doorman
