@@ -14,6 +14,7 @@ class BaseModelFieldTest:
     model: models.Model = None
     field_name: str = None
     field_type: models.Field = None
+    validators: tuple = None
 
     null: bool = False
     blank: bool = False
@@ -58,10 +59,13 @@ class BaseModelFieldTest:
         assert self.field.auto_now_add == self.auto_now_add
 
     def test_validators(self):
+        if not self.validators:
+            pytest.skip("There are no validators to check.")
+
         field_validators = [type(validator) for validator in self.field.validators]
 
         if not field_validators:
             pytest.skip(f"The field {self.field_name} does not have validators.")
 
-        for validator in field_validators:
+        for validator in self.validators:
             assert validator in field_validators
