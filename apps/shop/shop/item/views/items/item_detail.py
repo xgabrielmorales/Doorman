@@ -12,7 +12,7 @@ class ItemDetailAPIView(GenericAPIView):
         name = serializers.CharField()
         description = serializers.CharField()
         gross_cost = serializers.DecimalField(max_digits=12, decimal_places=2)
-        tax_applicable = serializers.DecimalField(max_digits=4, decimal_places=2)
+        tax_applicable = serializers.DecimalField(max_digits=3, decimal_places=2)
         reference = serializers.CharField()
 
     @extend_schema(

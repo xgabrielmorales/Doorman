@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from shop.common.models import BaseModel
@@ -22,9 +22,9 @@ class Item(BaseModel):
         validators=[MinValueValidator(Decimal("0"))],
     )
     tax_applicable = models.DecimalField(
-        max_digits=4,
+        max_digits=3,
         decimal_places=2,
-        validators=[MinValueValidator(Decimal("0"))],
+        validators=[MaxValueValidator(Decimal("1"))],
         db_comment="Taxes applicable to the item.",
     )
     reference = models.CharField(

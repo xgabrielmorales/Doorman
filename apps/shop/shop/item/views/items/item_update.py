@@ -11,7 +11,7 @@ class ItemPartialUpdateAPIView(GenericAPIView):
         name = serializers.CharField(min_length=2, max_length=128, required=False)
         description = serializers.CharField(allow_blank=True, max_length=128, required=False)
         gross_cost = serializers.DecimalField(max_digits=12, decimal_places=3, required=False)
-        tax_applicable = serializers.DecimalField(max_digits=4, decimal_places=2, required=False)
+        tax_applicable = serializers.DecimalField(max_digits=3, decimal_places=2, required=False)
         reference = serializers.CharField(allow_blank=True, required=False)
 
     @extend_schema(request=ItemUpdateSerializer, responses=None)

@@ -1,8 +1,8 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from shop.item.models import Item
 from tests.models.common import BaseModelFieldTest
-from django.core.validators import MinValueValidator
 
 
 class BaseTestItem(BaseModelFieldTest):
@@ -29,7 +29,7 @@ class TestFieldItemNetCost(BaseTestItem):
 class TestFieldItemTaxApplicable(BaseTestItem):
     field_name = "tax_applicable"
     field_type = models.DecimalField
-    validators = (MinValueValidator,)
+    validators = (MaxValueValidator,)
 
 
 class TestFieldItemReference(BaseTestItem):
