@@ -1,6 +1,6 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.views import APIView, Request, Response
-from drf_spectacular.utils import extend_schema
 
 from shop.item.services.item import item_delete
 
