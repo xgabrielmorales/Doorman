@@ -15,7 +15,7 @@ class TestItemCreate:
         item = item_create(
             name=fake_item.name,
             description=fake_item.description,
-            net_cost=fake_item.net_cost,
+            gross_cost=fake_item.gross_cost,
             tax_applicable=fake_item.tax_applicable,
             reference=fake_item.reference,
         )
@@ -34,7 +34,7 @@ class TestItemPartialUpdate:
             item_id=item.id,
             name=fake_item.name,
             description=fake_item.description,
-            net_cost=fake_item.net_cost,
+            gross_cost=fake_item.gross_cost,
             tax_applicable=fake_item.tax_applicable,
             reference=fake_item.reference,
         )
@@ -43,7 +43,7 @@ class TestItemPartialUpdate:
 
         assert item.name == fake_item.name
         assert item.description == fake_item.description
-        assert item.net_cost == Decimal(str(fake_item.net_cost))
+        assert item.gross_cost == Decimal(str(fake_item.gross_cost))
         assert item.tax_applicable == Decimal(str(fake_item.tax_applicable))
         assert item.reference == fake_item.reference
 

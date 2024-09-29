@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('name', models.CharField(db_comment='Item name.', max_length=128)),
                 ('description', models.TextField(blank=True, db_comment='Item description.')),
-                ('net_cost', models.DecimalField(db_comment='Item cost excluding tax.', decimal_places=2, max_digits=12, validators=[django.core.validators.MinValueValidator(Decimal('0'))])),
+                ('gross_cost', models.DecimalField(db_comment='Item cost before deductions and taxes.', decimal_places=2, max_digits=12, validators=[django.core.validators.MinValueValidator(Decimal('0'))])),
                 ('tax_applicable', models.DecimalField(db_comment='Taxes applicable to the item.', decimal_places=2, max_digits=4, validators=[django.core.validators.MinValueValidator(Decimal('0'))])),
                 ('reference', models.CharField(blank=True, db_comment='Item reference', max_length=128)),
             ],

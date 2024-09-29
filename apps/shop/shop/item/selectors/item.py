@@ -8,7 +8,7 @@ class ItemListFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(lookup_expr="icontains")
 
     order_by = django_filters.OrderingFilter(
-        fields=("id", "name", "net_cost", "tax_applicable"),
+        fields=("id", "name", "gross_cost", "tax_applicable"),
     )
 
 

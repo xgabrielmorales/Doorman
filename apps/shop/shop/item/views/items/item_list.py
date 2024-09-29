@@ -13,7 +13,7 @@ class ItemListAPIView(GenericAPIView):
         id = serializers.IntegerField()
         name = serializers.CharField()
         description = serializers.CharField()
-        net_cost = serializers.DecimalField(max_digits=12, decimal_places=3)
+        gross_cost = serializers.DecimalField(max_digits=12, decimal_places=3)
         tax_applicable = serializers.DecimalField(max_digits=4, decimal_places=2)
         reference = serializers.CharField()
 

@@ -32,7 +32,7 @@ class TestItemCRUD:
             "id": item.id,
             "name": item.name,
             "description": item.description,
-            "net_cost": item.net_cost,
+            "gross_cost": item.gross_cost,
             "tax_applicable": item.tax_applicable,
             "reference": item.reference,
         }
@@ -52,7 +52,7 @@ class TestItemCRUD:
             data={
                 "name": item.name,
                 "description": item.description,
-                "net_cost": item.net_cost,
+                "gross_cost": item.gross_cost,
                 "tax_applicable": item.tax_applicable,
                 "reference": item.reference,
             },

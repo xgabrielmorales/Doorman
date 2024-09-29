@@ -21,7 +21,7 @@ class TestFieldItemDescription(BaseTestItem):
 
 
 class TestFieldItemNetCost(BaseTestItem):
-    field_name = "net_cost"
+    field_name = "gross_cost"
     field_type = models.DecimalField
     validators = (MinValueValidator,)
 

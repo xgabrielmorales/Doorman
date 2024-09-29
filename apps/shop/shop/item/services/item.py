@@ -10,14 +10,14 @@ def item_create(
     *,
     name: str,
     description: str,
-    net_cost: Decimal,
+    gross_cost: Decimal,
     tax_applicable: Decimal,
     reference: str,
 ) -> Item:
     item = Item(
         name=name,
         description=description,
-        net_cost=net_cost,
+        gross_cost=gross_cost,
         tax_applicable=tax_applicable,
         reference=reference,
     )
@@ -41,7 +41,7 @@ def item_partial_update(
     item_id: int,
     name: str | None = None,
     description: str | None = None,
-    net_cost: Decimal | None = None,
+    gross_cost: Decimal | None = None,
     tax_applicable: Decimal | None = None,
     reference: str | None = None,
 ) -> None:
@@ -52,7 +52,7 @@ def item_partial_update(
 
     item.name = name or item.name
     item.description = description or item.description
-    item.net_cost = net_cost or item.net_cost
+    item.gross_cost = gross_cost or item.gross_cost
     item.tax_applicable = tax_applicable or item.tax_applicable
     item.reference = reference or item.reference
 

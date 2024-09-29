@@ -9,7 +9,7 @@ class ItemFactory(django.DjangoModelFactory):
 
     name = Faker("sentence", nb_words=2)
     description = Faker("sentence", nb_words=6)
-    net_cost = Faker("numerify", text="%%%%%%.%%")
+    gross_cost = Faker("numerify", text="%%%%%%.%%")
     tax_applicable = Faker("numerify", text="%%.%%")
     reference = Faker("ean")
     active = True

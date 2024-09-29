@@ -10,7 +10,7 @@ class ItemCreateAPIView(GenericAPIView):
     class ItemCreateSerializer(serializers.Serializer):
         name = serializers.CharField(min_length=2, max_length=128)
         description = serializers.CharField(allow_blank=True, max_length=128)
-        net_cost = serializers.DecimalField(max_digits=12, decimal_places=2)
+        gross_cost = serializers.DecimalField(max_digits=12, decimal_places=2)
         tax_applicable = serializers.DecimalField(max_digits=4, decimal_places=2)
         reference = serializers.CharField(allow_blank=True)
 

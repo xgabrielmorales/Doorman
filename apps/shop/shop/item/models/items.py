@@ -15,10 +15,10 @@ class Item(BaseModel):
         blank=True,
         db_comment="Item description.",
     )
-    net_cost = models.DecimalField(
+    gross_cost = models.DecimalField(
         max_digits=12,
         decimal_places=2,
-        db_comment="Item cost excluding tax.",
+        db_comment="Item cost before deductions and taxes.",
         validators=[MinValueValidator(Decimal("0"))],
     )
     tax_applicable = models.DecimalField(
