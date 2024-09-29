@@ -39,6 +39,7 @@ python_files = ["test_*.py"]
 testpaths = ["tests"]
 asyncio_default_fixture_loop_scope = "function"
 
+
 [tool.ruff]
 line-length = 100
 exclude = [
@@ -46,6 +47,9 @@ exclude = [
   "venv",
   "migrations",
 ]
+
+[tool.ruff.lint]
+extend-select = ["I"]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
