@@ -1,6 +1,6 @@
 import pytest
-
 from shop.item.selectors.item import item_detail, items_list
+
 from tests.factories.item import ItemFactory
 
 
@@ -17,6 +17,11 @@ class TestItemDetail:
 
         with pytest.raises(Exception):
             item_detail(item_id=created_item.id)
+
+    @pytest.mark.django_db
+    def test_fetch_non_existent_item(self):
+        with pytest.raises(Exception):
+            item_detail(item_id=999)
 
 
 class TestItemList:
