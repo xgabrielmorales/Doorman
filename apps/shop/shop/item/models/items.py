@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import F, Value as V
 
 from shop.common.models import BaseModel
 
@@ -20,6 +21,14 @@ class Item(BaseModel):
         decimal_places=2,
         db_comment="Item cost before deductions and taxes.",
         validators=[MinValueValidator(Decimal("0"))],
+    )
+    net_cost = models.GeneratedField(
+        expression=F("gross_cost") * (F("tax_applicable") + V(Decimal("1"))),
+        output_field=models.DecimalField(
+            max_digits=12,
+            decimal_places=2,
+        ),
+        db_persist=True,
     )
     tax_applicable = models.DecimalField(
         max_digits=3,
