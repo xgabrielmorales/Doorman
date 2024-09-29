@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from unittest.mock import MagicMock
 
 import jwt
 import pytest
@@ -6,13 +7,12 @@ import pytest
 from src.apps.authentication.schemas import Token
 from src.apps.authentication.services.jwt import AuthJwt
 from src.apps.authentication.services.jwt_exceptions import (
-    AuthJwtDecodeError,
-    InvalidHeaderError,
-    AuthJwtRefreshTokenRequired,
     AuthJwtAccessTokenRequired,
+    AuthJwtDecodeError,
+    AuthJwtRefreshTokenRequired,
+    InvalidHeaderError,
 )
 from src.core.settings import settings
-from unittest.mock import MagicMock
 
 
 class TestAuthJWTService:

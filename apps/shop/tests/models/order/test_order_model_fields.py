@@ -1,7 +1,7 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-from shop.order.models import Order
 
+from shop.order.models import Order
 from tests.models.common import BaseModelFieldTest
 
 
