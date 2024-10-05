@@ -32,8 +32,8 @@ class TestItemCRUD:
             "id": item.id,
             "name": item.name,
             "description": item.description,
-            "gross_cost": item.gross_cost,
-            "tax_applicable": item.tax_applicable,
+            "gross_cost": str(item.gross_cost),
+            "tax_applicable": str(item.tax_applicable),
             "reference": item.reference,
         }
 
