@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import F, Value as V
 
 from shop.item.models import Item
-from tests.models.common import BaseModelFieldTest
+from tests.common.models import BaseModelFieldTest
 
 
 class BaseTestItem(BaseModelFieldTest):

@@ -9,8 +9,8 @@ from rest_framework.response import Response
 from rest_framework.test import APIClient
 
 from shop.order.models import Order
-from tests.factories.item import ItemFactory
-from tests.factories.order import OrderFactory, OrderItemFactory
+from tests.item.factories import ItemFactory
+from tests.order.factories import OrderFactory, OrderItemFactory
 
 pytestmark = pytest.mark.django_db
 

@@ -1,7 +1,7 @@
 from factory import Faker, SubFactory, django, fuzzy
 
 from shop.order.models import Order, OrderItem
-from tests.factories.item import ItemFactory
+from tests.item.factories import ItemFactory
 
 
 class OrderFactory(django.DjangoModelFactory):

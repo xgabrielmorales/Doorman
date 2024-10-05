@@ -1,7 +1,7 @@
 import pytest
 
 from shop.item.selectors.item import item_detail, items_list
-from tests.factories.item import ItemFactory
+from tests.item.factories import ItemFactory
 
 
 class TestItemDetail:

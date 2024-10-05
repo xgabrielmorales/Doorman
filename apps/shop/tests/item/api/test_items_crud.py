@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from shop.item.models import Item
-from tests.factories.item import ItemFactory
+from tests.item.factories import ItemFactory
 
 pytestmark = pytest.mark.django_db
 

@@ -4,7 +4,7 @@ import pytest
 
 from shop.item.models import Item
 from shop.item.services.item import item_create, item_delete, item_partial_update
-from tests.factories.item import ItemFactory
+from tests.item.factories import ItemFactory
 
 
 class TestItemCreate:

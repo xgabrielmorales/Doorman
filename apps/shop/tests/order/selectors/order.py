@@ -5,7 +5,7 @@ from pytest_django import DjangoAssertNumQueries
 
 from shop.order.models import Order
 from shop.order.selectors.order import order_detail, order_list
-from tests.factories.order import OrderFactory, OrderItemFactory
+from tests.order.factories import OrderFactory, OrderItemFactory
 
 
 class TestOrderDetail:
