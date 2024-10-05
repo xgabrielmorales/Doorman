@@ -6,6 +6,7 @@ from httpx import AsyncClient, codes
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.apps.authentication.services.jwt import AuthJwt
+from src.apps.users.schemas import CreateUserData
 from src.apps.users.services import create_user
 from tests.apps.users.factories import CreateUserDataFactory
 
@@ -21,6 +22,11 @@ class TestAutorizationAPI:
         self,
         async_client: AsyncClient,
     ):
+        """Test registering a new user.
+
+        Args:
+            async_client (AsyncClient): The asynchronous HTTP client.
+        """
         user_data = CreateUserDataFactory.build()
         response = await async_client.post(
             url="/users/register",
@@ -37,8 +43,14 @@ class TestAutorizationAPI:
     async def test_register_existing_user(
         self,
         async_client: AsyncClient,
+        user_data: CreateUserData,
     ):
-        user_data = CreateUserDataFactory.build()
+        """Test registering a user that already exists.
+
+        Args:
+            async_client (AsyncClient): The asynchronous HTTP client.
+            user_data (CreateUserData): The user data for registration.
+        """
         await async_client.post(
             url="/users/register",
             json=user_data.model_dump(),
@@ -61,11 +73,20 @@ class TestAutorizationAPI:
     async def test_login(
         self,
         async_client: AsyncClient,
+        user_data: CreateUserData,
         async_db_session: AsyncSession,
         valid_username: bool,
         valid_password: bool,
     ):
-        user_data = CreateUserDataFactory.build()
+        """Test user login.
+
+        Args:
+            async_client (AsyncClient): The asynchronous HTTP client.
+            user_data (CreateUserData): The user data for registration.
+            async_db_session (AsyncSession): The asynchronous database session.
+            valid_username (bool): Flag indicating if the username is valid.
+            valid_password (bool): Flag indicating if the password is valid.
+        """
         await create_user(db=async_db_session, user_data=user_data)
 
         data: dict[str, str] = {
@@ -98,11 +119,20 @@ class TestAutorizationAPI:
     async def test_refresh_session(
         self,
         async_client: AsyncClient,
+        user_data: CreateUserData,
         async_db_session: AsyncSession,
         authorize: AuthJwt,
         valid_refresh_token: bool,
     ):
-        user_data = CreateUserDataFactory.build()
+        """Test refreshing a user session.
+
+        Args:
+            async_client (AsyncClient): The asynchronous HTTP client.
+            user_data (CreateUserData): The user data for registration.
+            async_db_session (AsyncSession): The asynchronous database session.
+            authorize (AuthJwt): The authorization service.
+            valid_refresh_token (bool): Flag indicating if the refresh token is valid.
+        """
         user = await create_user(db=async_db_session, user_data=user_data)
 
         refresh_token = authorize.create_refresh_token(subject=user.id)
@@ -124,13 +154,20 @@ class TestAutorizationAPI:
             assert response.status_code == codes.UNPROCESSABLE_ENTITY.value
 
     @pytest.mark.asyncio
-    async def test_invalid_access_token_format(
+    async def test_handle_invalid_access_token_format(
         self,
         async_client: AsyncClient,
+        user_data: CreateUserData,
         async_db_session: AsyncSession,
         authorize: AuthJwt,
     ):
-        user_data = CreateUserDataFactory.build()
+        """Test handling invalid access token format.
+
+        Args:
+            async_client (AsyncClient): The asynchronous HTTP client.
+            async_db_session (AsyncSession): The asynchronous database session.
+            authorize (AuthJwt): The authorization service.
+        """
         user = await create_user(db=async_db_session, user_data=user_data)
 
         token = authorize.create_access_token(subject=user.id)

@@ -4,51 +4,75 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.apps.users.models import User
+from src.apps.users.schemas import CreateUserData
 from src.apps.users.services import create_user
-from tests.apps.users.factories import CreateUserDataFactory
 
 
 class TestUserRegistration:
     @pytest.mark.asyncio
-    async def test_create_user_new_username(
+    async def test_create_user_with_new_username(
         self,
         async_db_session: AsyncSession,
+        user_data: CreateUserData,
     ):
-        user_data = CreateUserDataFactory.build()
-        user = await create_user(db=async_db_session, user_data=user_data)
+        """Test that a user can be created with a new username.
+
+        Args:
+            async_db_session (AsyncSession): The asynchronous database session.
+            user_data (CreateUserData): The data of the user to be created.
+        """
+        await create_user(db=async_db_session, user_data=user_data)
 
         query = select(User).where(User.username == user_data.username)
         result = await async_db_session.exec(query)
         created_user = result.first()
 
-        assert user.username == user_data.username
-        assert user.first_name == user_data.first_name
-        assert user.last_name == user_data.last_name
-
         assert created_user is not None
+        assert created_user.username == user_data.username
+        assert created_user.first_name == user_data.first_name
+        assert created_user.last_name == user_data.last_name
 
     @pytest.mark.asyncio
-    async def test_create_user_existing_username(
+    async def test_create_user_with_existing_username_raises_exception(
         self,
         async_db_session: AsyncSession,
+        user_data: CreateUserData,
     ):
-        user_data = CreateUserDataFactory.build()
+        """Test that creating a user with an existing username raises an exception.
+
+        Args:
+            async_db_session (AsyncSession): The asynchronous database session.
+            user_data (CreateUserData): The data of the user to be created.
+
+        Raises:
+            HTTPException: If the username already exists.
+        """
         await create_user(db=async_db_session, user_data=user_data)
 
         with pytest.raises(HTTPException) as exc_info:
             await create_user(db=async_db_session, user_data=user_data)
 
         assert exc_info.value.status_code == status.HTTP_400_BAD_REQUEST
-        assert "User with the same username already exists" in str(
-            exc_info.value,
-        )
+        assert "User with the same username already exists" in str(exc_info.value)
 
     @pytest.mark.asyncio
-    async def test_create_user_password_hashing(
+    async def test_create_user_password_is_hashed(
         self,
         async_db_session: AsyncSession,
+        user_data: CreateUserData,
     ):
-        user_data = CreateUserDataFactory.build()
-        user = await create_user(db=async_db_session, user_data=user_data)
+        """Test that the user's password is stored as a hash.
 
-        assert user.password != user_data.password
+        Args:
+            async_db_session (AsyncSession): The asynchronous database session.
+            user_data (CreateUserData): The data of the user to be created.
+        """
+        await create_user(db=async_db_session, user_data=user_data)
+
+        query = select(User).where(User.username == user_data.username)
+        result = await async_db_session.exec(query)
+        created_user = result.first()
+
+        assert created_user is not None
+        assert created_user.password != user_data.password
+        assert len(created_user.password) > 0

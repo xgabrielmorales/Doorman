@@ -6,8 +6,9 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.apps.authentication.services.jwt import AuthJwt
 from src.apps.authentication.services.users import user_login
+from src.apps.users.models import User
+from src.apps.users.schemas import CreateUserData
 from src.apps.users.services import create_user, get_current_user
-from tests.apps.users.factories import CreateUserDataFactory
 
 
 class TestAuthentication:
@@ -16,8 +17,19 @@ class TestAuthentication:
         self,
         async_db_session: AsyncSession,
         authorize: AuthJwt,
+        user_data: CreateUserData,
     ):
-        user_data = CreateUserDataFactory.build()
+        """Test user login with valid credentials.
+
+        Args:
+            async_db_session (AsyncSession): The asynchronous database session.
+            authorize (AuthJwt): The authorization JWT object.
+            user_data (CreateUserData): The data of the user to be created.
+
+        Asserts:
+            jwt_payload (BaseModel): The JWT payload should be an instance of BaseModel.
+            jwt_payload.access_token (str): The access token should be a string.
+        """
         await create_user(db=async_db_session, user_data=user_data)
 
         auth_data = OAuth2PasswordRequestForm(
@@ -39,12 +51,21 @@ class TestAuthentication:
         self,
         async_db_session: AsyncSession,
         authorize: AuthJwt,
+        created_user: User,
     ):
-        user_data = CreateUserDataFactory.build()
-        await create_user(db=async_db_session, user_data=user_data)
+        """Test user login with invalid credentials.
 
+        Args:
+            async_db_session (AsyncSession): The asynchronous database session.
+            authorize (AuthJwt): The authorization JWT object.
+            created_user (User): The created user instance.
+
+        Asserts:
+            exc_info.value.status_code (int): The status code should be 401.
+            exc_info.value.detail (str): The detail message should be "Invalid username or password".
+        """
         auth_data = OAuth2PasswordRequestForm(
-            username=user_data.username,
+            username=created_user.username,
             password="Wrong password",
         )
 
@@ -63,8 +84,18 @@ class TestAuthentication:
         self,
         async_db_session: AsyncSession,
         authorize: AuthJwt,
+        user_data: CreateUserData,
     ):
-        user_data = CreateUserDataFactory.build()
+        """Test getting session data after user login.
+
+        Args:
+            async_db_session (AsyncSession): The asynchronous database session.
+            authorize (AuthJwt): The authorization JWT object.
+            user_data (CreateUserData): The data of the user to be created.
+
+        Asserts:
+            user (BaseModel): The created user should be an instance of BaseModel.
+        """
         user = await create_user(db=async_db_session, user_data=user_data)
 
         auth_data = OAuth2PasswordRequestForm(
@@ -93,6 +124,12 @@ class TestAuthentication:
         async_db_session: AsyncSession,
         authorize: AuthJwt,
     ):
+        """Test invalid session data.
+
+        Args:
+            async_db_session (AsyncSession): The asynchronous database session.
+            authorize (AuthJwt): The authorization JWT object.
+        """
         access_token = authorize.create_access_token(subject=0)
 
         with pytest.raises(HTTPException):
