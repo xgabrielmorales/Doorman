@@ -25,7 +25,7 @@ class OrderListAPIView(GenericAPIView):
         },
     )
     def get(self, request: Request) -> Response:
-        orders = order_list()
+        orders = order_list(query_params=request.query_params)
 
         return get_paginated_response(
             pagination_class=LimitOffsetPagination,

@@ -9,16 +9,23 @@ class OrderListFilter(django_filters.FilterSet):
     net_cost = django_filters.NumberFilter()
 
     order_by = django_filters.OrderingFilter(
-        fields=("gross_cost", "net_cost"),
+        fields=("id", "gross_cost", "net_cost"),
     )
 
 
-def order_list() -> QuerySet[Order]:
-    return (
+def order_list(
+    *,
+    query_params: dict[str, str | int | float | bool],
+) -> QuerySet[Order]:
+    queryset = (
         Order.objects.filter(active=True)
+        .prefetch_related(
+            Prefetch(lookup="orderitem_set", queryset=OrderItem.objects.filter(active=True)),
+        )
         .annotate(number_items=Count("orderitem__item", filter=Q(orderitem__active=True)))
         .only("id", "gross_cost", "net_cost")
     )
+    return OrderListFilter(data=query_params, queryset=queryset).qs
 
 
 def order_detail(*, order_id: int) -> QuerySet[Order]:
