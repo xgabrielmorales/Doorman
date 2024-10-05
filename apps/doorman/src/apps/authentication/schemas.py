@@ -1,7 +1,7 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
-class Token(BaseModel):
+class TokenData(BaseModel):
     exp: int | None = None
     iat: int
     jti: str
@@ -17,18 +17,3 @@ class AuthData(BaseModel):
 class AuthGrantedData(BaseModel):
     access_token: str
     refresh_token: str
-
-
-class CreateUserData(BaseModel):
-    first_name: str
-    last_name: str
-    username: str
-    password: str
-
-
-class CreatedUserData(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    first_name: str
-    last_name: str
-    username: str

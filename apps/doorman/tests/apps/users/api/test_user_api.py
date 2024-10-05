@@ -2,27 +2,17 @@ import pytest
 from httpx import AsyncClient, codes
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from src.apps.authentication.schemas import CreateUserData
 from src.apps.authentication.services.jwt import AuthJwt
-from src.apps.authentication.services.users import create_user
-
-
-@pytest.fixture
-def user_data():
-    return CreateUserData(
-        first_name="Elliot",
-        last_name="Alderson",
-        username="Mr_r0b0t",
-        password="p4ain_",
-    )
+from src.apps.users.services import create_user
+from tests.apps.users.factories import CreateUserDataFactory
 
 
 @pytest.mark.asyncio
 async def test_user_me(
     async_client: AsyncClient,
     async_db_session: AsyncSession,
-    user_data: CreateUserData,
 ):
+    user_data = CreateUserDataFactory.build()
     user = await create_user(db=async_db_session, user_data=user_data)
 
     auth_token_reponse = await async_client.post(
@@ -48,7 +38,6 @@ async def test_user_me(
 async def test_invalid_user_me(
     async_client: AsyncClient,
     async_db_session: AsyncSession,
-    user_data: CreateUserData,
     authorize: AuthJwt,
 ):
     access_token = authorize.create_access_token(subject=0)

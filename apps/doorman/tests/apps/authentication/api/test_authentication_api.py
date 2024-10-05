@@ -5,19 +5,9 @@ import pytest
 from httpx import AsyncClient, codes
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from src.apps.authentication.schemas import CreateUserData
 from src.apps.authentication.services.jwt import AuthJwt
-from src.apps.authentication.services.users import create_user
-
-
-@pytest.fixture
-def user_data():
-    return CreateUserData(
-        first_name="Elliot",
-        last_name=" Alderson 4",
-        username="Mr_r0b0t",
-        password="p4ain_",
-    )
+from src.apps.users.services import create_user
+from tests.apps.users.factories import CreateUserDataFactory
 
 
 def random_word(length):
@@ -30,10 +20,10 @@ class TestAutorizationAPI:
     async def test_register(
         self,
         async_client: AsyncClient,
-        user_data: CreateUserData,
     ):
+        user_data = CreateUserDataFactory.build()
         response = await async_client.post(
-            url="/auth/register",
+            url="/users/register",
             json=user_data.model_dump(),
         )
         assert response.status_code == codes.CREATED.value
@@ -47,15 +37,15 @@ class TestAutorizationAPI:
     async def test_register_existing_user(
         self,
         async_client: AsyncClient,
-        user_data: CreateUserData,
     ):
+        user_data = CreateUserDataFactory.build()
         await async_client.post(
-            url="/auth/register",
+            url="/users/register",
             json=user_data.model_dump(),
         )
 
         response = await async_client.post(
-            url="/auth/register",
+            url="/users/register",
             json=user_data.model_dump(),
         )
         assert response.status_code == codes.BAD_REQUEST.value
@@ -72,10 +62,10 @@ class TestAutorizationAPI:
         self,
         async_client: AsyncClient,
         async_db_session: AsyncSession,
-        user_data: CreateUserData,
         valid_username: bool,
         valid_password: bool,
     ):
+        user_data = CreateUserDataFactory.build()
         await create_user(db=async_db_session, user_data=user_data)
 
         data: dict[str, str] = {
@@ -109,10 +99,10 @@ class TestAutorizationAPI:
         self,
         async_client: AsyncClient,
         async_db_session: AsyncSession,
-        user_data: CreateUserData,
         authorize: AuthJwt,
         valid_refresh_token: bool,
     ):
+        user_data = CreateUserDataFactory.build()
         user = await create_user(db=async_db_session, user_data=user_data)
 
         refresh_token = authorize.create_refresh_token(subject=user.id)
@@ -138,9 +128,9 @@ class TestAutorizationAPI:
         self,
         async_client: AsyncClient,
         async_db_session: AsyncSession,
-        user_data: CreateUserData,
         authorize: AuthJwt,
     ):
+        user_data = CreateUserDataFactory.build()
         user = await create_user(db=async_db_session, user_data=user_data)
 
         token = authorize.create_access_token(subject=user.id)

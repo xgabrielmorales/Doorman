@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import jwt
 import pytest
 
-from src.apps.authentication.schemas import Token
+from src.apps.authentication.schemas import TokenData
 from src.apps.authentication.services.jwt import AuthJwt
 from src.apps.authentication.services.jwt_exceptions import (
     AuthJwtAccessTokenRequired,
@@ -83,8 +83,8 @@ class TestAuthJWTService:
         access_token = authorize.create_access_token(subject=1)
         refresh_token = authorize.create_refresh_token(subject=1)
 
-        assert isinstance(authorize.get_jwt(access_token), Token)
-        assert isinstance(authorize.get_jwt(refresh_token), Token)
+        assert isinstance(authorize.get_jwt(access_token), TokenData)
+        assert isinstance(authorize.get_jwt(refresh_token), TokenData)
 
     def test_get_invalid_jwt(self, authorize: AuthJwt):
         with pytest.raises(AuthJwtDecodeError):

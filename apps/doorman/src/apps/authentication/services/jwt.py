@@ -7,7 +7,7 @@ import jwt
 from fastapi import Request
 from fastapi.security import OAuth2PasswordBearer
 
-from src.apps.authentication.schemas import Token
+from src.apps.authentication.schemas import TokenData
 from src.apps.authentication.services.jwt_exceptions import (
     AuthJwtAccessTokenRequired,
     AuthJwtDecodeError,
@@ -86,7 +86,7 @@ class AuthJwt:
         if exp_time:
             custom_claims["exp"] = exp_time
 
-        token = Token.model_validate({**reserved_claims, **custom_claims})
+        token = TokenData.model_validate({**reserved_claims, **custom_claims})
 
         return jwt.encode(
             payload=token.model_dump(),
@@ -118,7 +118,7 @@ class AuthJwt:
             exp_time=self._get_int_from_datetime(now + self._refresh_token_expires),
         )
 
-    def get_jwt(self, encoded_token: str | bytes | None = None) -> Token:
+    def get_jwt(self, encoded_token: str | bytes | None = None) -> TokenData:
         token = encoded_token or self._token
         algorithms = [self._algorithm]
 
@@ -131,7 +131,7 @@ class AuthJwt:
         except Exception as err:
             raise AuthJwtDecodeError(status_code=422, detail=str(err))
 
-        return Token(**raw_jwt)
+        return TokenData(**raw_jwt)
 
     def _verify_jwt_in_request(
         self,
