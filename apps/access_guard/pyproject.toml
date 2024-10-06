@@ -1,5 +1,5 @@
 [project]
-name = "doorman"
+name = "access_guard"
 version = "0.1.0"
 description = "Microservice responsible for the application's authentication."
 readme = "README.md"

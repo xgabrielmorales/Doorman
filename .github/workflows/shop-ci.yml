@@ -3,7 +3,7 @@ name: Shop CI
 on:
   push:
     paths:
-      - .github/workflows/doorman-ci.yml
+      - .github/workflows/shop-ci.yml.yml
       - apps/shop/shop/**
       - apps/shop/test/**
   pull_request:

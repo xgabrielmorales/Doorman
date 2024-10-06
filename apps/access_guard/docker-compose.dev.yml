@@ -1,12 +1,12 @@
-name: doorman
+name: access_guard
 
 services:
   app:
     build:
       context: .
       dockerfile: ./compose/dev/Dockerfile
-    image: doorman-app
-    container_name: doorman-app
+    image: access_guard-app
+    container_name: access_guard-app
     restart: always
     depends_on:
       - postgres-db
@@ -20,13 +20,13 @@ services:
 
   postgres-db:
     image: postgres:16
-    container_name: doorman-postgres-db
+    container_name: access_guard-postgres-db
     volumes:
-      - doorman-postgres-db-data:/var/lib/postgresql/data
+      - access_guard-postgres-db-data:/var/lib/postgresql/data
     env_file:
       - .env
     ports:
       - "5432:5432"
 
 volumes:
-  doorman-postgres-db-data:
+  access_guard-postgres-db-data:

@@ -5,7 +5,7 @@ ENV \
   PYTHONDONTWRITEBYTECODE=1 \
   UV_PROJECT_ENVIRONMENT=/venv
 
-ARG APP_NAME="doorman"
+ARG APP_NAME="access_guard"
 RUN groupadd --system "${APP_NAME}" \
   && adduser \
   --no-create-home \

@@ -1,11 +1,11 @@
-name: Doorman CI
+name: Access Guard CI
 
 on:
   push:
     paths:
-      - .github/workflows/doorman-ci.yml
-      - apps/doorman/src/**
-      - apps/doorman/test/**
+      - .github/workflows/access_guard-ci.yml
+      - apps/access_guard/src/**
+      - apps/access_guard/test/**
   pull_request:
   workflow_dispatch:
 
@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: apps/doorman
+        working-directory: apps/access_guard
 
     env:
         POSTGRES_HOST: localhost
@@ -76,4 +76,4 @@ jobs:
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          base-path: apps/doorman
+          base-path: apps/access_guard
