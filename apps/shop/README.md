@@ -1,5 +1,5 @@
-# Access Guard
-Authentication Service responsible for user authentication and authorization.
+# Shop
+Service to manage products and orders.
 
 ## Getting Started
 
