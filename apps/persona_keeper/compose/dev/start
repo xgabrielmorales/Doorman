@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+
+alembic upgrade head
+
+exec uvicorn src.main:app --host "0.0.0.0" --reload

@@ -1,0 +1,79 @@
+name: Persona Keeper CI
+
+on:
+  push:
+    paths:
+      - .github/workflows/persona_keeper-ci.yml
+      - apps/persona_keeper/src/**
+      - apps/persona_keeper/test/**
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/persona_keeper
+
+    env:
+        POSTGRES_HOST: localhost
+        POSTGRES_DB: example-db-db
+        POSTGRES_USER: example-user-db
+        POSTGRES_PASSWORD: example-password-db
+
+    services:
+      postgres-db:
+        image: postgres:16
+        env:
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install dependencies
+        run: |
+          uv sync --locked --no-install-project --dev
+
+      - name: Lint and Format with Ruff
+        run: |
+          uv run ruff check --output-format=github .
+          uv run ruff format --check .
+        continue-on-error: true
+
+      - name: Static type checker with Mypy
+        run: uv run mypy .
+        continue-on-error: true
+
+      - name: Run database migrations
+        run: uv run alembic upgrade head
+
+      - name: Run tests
+        run: uv run pytest --cov=src --cov-report=term-missing --cov-report=xml
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-path: apps/persona_keeper
